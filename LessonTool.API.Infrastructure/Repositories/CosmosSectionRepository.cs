@@ -20,19 +20,19 @@ namespace LessonTool.API.Infrastructure.Repositories
         }
 
 
-        public async Task<List<LessonDto>> GetSectionsByLesson(Guid lessonId, CancellationToken cancellationToken = default)
+        public async Task<List<SectionDto>> GetSectionsByLesson(Guid sectionId, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
 
-        public async Task<LessonDto> CreateSectionAsync(LessonDto lesson, CancellationToken cancellationToken = default)
+        public async Task<SectionDto> CreateSectionAsync(SectionDto section, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
 
-        public async Task<LessonDto> UpdateSectionAsync(LessonDto lesson, CancellationToken cancellationToken = default)
+        public async Task<SectionDto> UpdateSectionAsync(SectionDto section, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

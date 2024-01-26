@@ -1,6 +1,5 @@
 ﻿using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.Common.Domain.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LessonTool.API.Endpoint.Controllers
@@ -17,34 +16,31 @@ namespace LessonTool.API.Endpoint.Controllers
             _sectionRepository = sectionRepository;
         }
 
-
-        [HttpGet]
-        public async Task<ActionResult<SectionDto>> GetAsync(CancellationToken cancellationToken)
-        {
-            return Ok();
-        }
-
         [HttpGet("{id}")]
         public async Task<ActionResult<SectionDto>> GetAsync(Guid id, CancellationToken cancellationToken)
         {
-            return Ok();
+            var section = await _sectionRepository.GetSectionByIdAsync(id, cancellationToken);
+            return Ok(section);
         }
 
         [HttpPost]
         public async Task<ActionResult<SectionDto>> PostAsync([FromBody] SectionDto section, CancellationToken cancellationToken)
         {
-            return Ok();
+            var createdSection = await _sectionRepository.CreateSectionAsync(section, cancellationToken);
+            return CreatedAtAction("api/sections", new { Id =  createdSection.Id }, createdSection);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<SectionDto>> PutAsync(Guid id, [FromBody] SectionDto section)
+        public async Task<ActionResult> PutAsync([FromBody] SectionDto section, CancellationToken cancellationToken)
         {
+            await _sectionRepository.UpdateSectionAsync(section, cancellationToken);
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAsync(Guid id)
+        public async Task<ActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
+            await _sectionRepository.DeleteSectionAsync(id, cancellationToken);
             return NoContent();
         }
     }
