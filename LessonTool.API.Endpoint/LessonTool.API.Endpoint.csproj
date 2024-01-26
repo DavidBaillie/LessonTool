@@ -10,4 +10,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LessonTool.API.Infrastructure\LessonTool.API.Infrastructure.csproj" />
+    <ProjectReference Include="..\LessonTool.Common.Domain\LessonTool.Common.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
