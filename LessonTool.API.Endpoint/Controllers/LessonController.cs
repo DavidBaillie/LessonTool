@@ -19,26 +19,21 @@ namespace LessonTool.API.Endpoint.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<LessonDto>> GetAsync(DateTime? min = null, DateTime? max = null, bool includeSections = false, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<List<LessonDto>>> GetAllAsync(DateTime? min = null, DateTime? max = null, bool includeSections = false, CancellationToken cancellationToken = default)
         {
             var lessons = await _lessonRepository.GetLessonsAsync(min, max, cancellationToken);
-            
-            //if (includeSections)
-                //lessons.ForEach(x => )
-
             return Ok(lessons);
         }
 
-
-        private async Task AssignSectionsToLesson(LessonDto lesson)
-        {
-
-        }
-
         [HttpGet("{id}")]
-        public async Task<ActionResult<LessonDto>> GetAsync(Guid id, CancellationToken cancellationToken)
+        public async Task<ActionResult<LessonDto>> GetAsync(Guid id, bool includeSections = true, CancellationToken cancellationToken = default)
         {
             var lesson = await _lessonRepository.GetLessonByIdAsync(id, cancellationToken);
+
+            if (lesson is null || !includeSections)
+                return Ok(lesson);
+
+            lesson.Sections = await _sectionRepository.GetSectionsByLesson(lesson.Id, cancellationToken);
             return Ok(lesson);
         }
 
@@ -46,7 +41,7 @@ namespace LessonTool.API.Endpoint.Controllers
         public async Task<ActionResult<LessonDto>> PostAsync([FromBody] LessonDto lesson, CancellationToken cancellationToken)
         {
             var createdLesson = await _lessonRepository.CreateLessonAsync(lesson, cancellationToken);
-            return CreatedAtAction("api/Lessons", new { createdLesson.Id }, createdLesson);
+            return CreatedAtAction(nameof(GetAsync), new { createdLesson.Id }, createdLesson);
         }
 
         [HttpPut("{id}")]
