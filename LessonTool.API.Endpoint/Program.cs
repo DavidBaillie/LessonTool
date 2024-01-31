@@ -1,4 +1,5 @@
 using LessonTool.API.Infrastructure.Interfaces;
+using LessonTool.API.Infrastructure.Options;
 using LessonTool.API.Infrastructure.Repositories;
 
 namespace LessonTool.API.Endpoint;
@@ -8,6 +9,9 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.Configure<CosmosClientOption>(
+            builder.Configuration.GetSection("CosmosOptions"));
 
         // Add services to the container.
         builder.Services.AddScoped<ILessonRepository, CosmosLessonRepository>();

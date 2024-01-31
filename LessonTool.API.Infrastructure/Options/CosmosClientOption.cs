@@ -1,4 +1,4 @@
-﻿namespace LessonTool.Common.Domain.Options;
+﻿namespace LessonTool.API.Infrastructure.Options;
 
 public class CosmosClientOption
 {

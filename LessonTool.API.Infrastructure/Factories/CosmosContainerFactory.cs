@@ -1,5 +1,5 @@
 ﻿using LessonTool.API.Infrastructure.Interfaces;
-using LessonTool.Common.Domain.Options;
+using LessonTool.API.Infrastructure.Options;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
 
