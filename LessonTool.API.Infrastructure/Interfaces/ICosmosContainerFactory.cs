@@ -1,9 +1,8 @@
 ﻿using Microsoft.Azure.Cosmos;
 
-namespace LessonTool.API.Infrastructure.Interfaces
+namespace LessonTool.API.Infrastructure.Interfaces;
+
+public interface ICosmosContainerFactory
 {
-    public interface ICosmosContainerFactory
-    {
-        Container CreateDataContainer();
-    }
+    Container CreateDataContainer();
 }

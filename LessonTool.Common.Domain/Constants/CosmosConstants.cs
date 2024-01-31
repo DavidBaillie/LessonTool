@@ -1,8 +1,7 @@
-﻿namespace LessonTool.Common.Domain.Constants
+﻿namespace LessonTool.Common.Domain.Constants;
+
+public class CosmosConstants
 {
-    public class CosmosConstants
-    {
-        public const string LessonTypeName = "Lesson";
-        public const string SectionTypeName = "Section";
-    }
+    public const string LessonTypeName = "Lesson";
+    public const string SectionTypeName = "Section";
 }
