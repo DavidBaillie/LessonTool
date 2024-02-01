@@ -15,7 +15,7 @@ public abstract class ApiControllerBase<T> : ControllerBase where T : EntityDtoB
 
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public virtual async Task<ActionResult<LessonDto>> GetAsync(Guid id, bool includeSections = true, CancellationToken cancellationToken = default)
+    public virtual async Task<ActionResult<T>> GetAsync(Guid id, bool includeSections = true, CancellationToken cancellationToken = default)
     {
         var entity = await _repository.GetAsync(id, cancellationToken);
         return Ok(entity);
@@ -23,7 +23,7 @@ public abstract class ApiControllerBase<T> : ControllerBase where T : EntityDtoB
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<ActionResult<LessonDto>> PostAsync([FromBody] T inboundEntity, CancellationToken cancellationToken)
+    public async Task<ActionResult<T>> PostAsync([FromBody] T inboundEntity, CancellationToken cancellationToken)
     {
         var entity = await _repository.CreateAsync(inboundEntity, cancellationToken);
         return CreatedAtAction(nameof(GetAsync), new { entity.Id }, entity);
