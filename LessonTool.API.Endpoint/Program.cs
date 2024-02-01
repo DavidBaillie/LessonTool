@@ -1,3 +1,4 @@
+using LessonTool.API.Infrastructure.Factories;
 using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.API.Infrastructure.Options;
 using LessonTool.API.Infrastructure.Repositories;
@@ -16,6 +17,7 @@ public class Program
         // Add services to the container.
         builder.Services.AddScoped<ILessonRepository, CosmosLessonRepository>();
         builder.Services.AddScoped<ISectionRepository, CosmosSectionRepository>();
+        builder.Services.AddScoped<ICosmosContainerFactory, CosmosContainerFactory>();
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
