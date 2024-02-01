@@ -1,4 +1,4 @@
-﻿namespace LessonTool.Common.Domain.Constants;
+﻿namespace LessonTool.API.Infrastructure.Constants;
 
 public class CosmosConstants
 {

@@ -1,4 +1,4 @@
-﻿using LessonTool.Common.Domain.Constants;
+﻿using LessonTool.API.Infrastructure.Constants;
 
 namespace LessonTool.API.Infrastructure.Models;
 

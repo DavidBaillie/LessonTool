@@ -1,4 +1,4 @@
-﻿using LessonTool.API.Infrastructure.Interfaces;
+﻿using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +17,7 @@ public abstract class ApiControllerBase<T> : ControllerBase where T : EntityDtoB
     [ProducesResponseType(StatusCodes.Status200OK)]
     public virtual async Task<ActionResult<LessonDto>> GetAsync(Guid id, bool includeSections = true, CancellationToken cancellationToken = default)
     {
-        var entity = await _repository.GetByIdAsync(id, cancellationToken);
+        var entity = await _repository.GetAsync(id, cancellationToken);
         return Ok(entity);
     }
 

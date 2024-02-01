@@ -1,8 +1,8 @@
-﻿using LessonTool.API.Infrastructure.Exceptions;
+﻿using LessonTool.API.Infrastructure.Constants;
+using LessonTool.API.Infrastructure.Exceptions;
 using LessonTool.API.Infrastructure.Extensions;
 using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.API.Infrastructure.Models;
-using LessonTool.Common.Domain.Constants;
 using LessonTool.Common.Domain.Extensions;
 using LessonTool.Common.Domain.Models;
 
@@ -35,7 +35,7 @@ public class CosmosLessonRepository : CosmosRepositoryBase, ILessonRepository
             .ToList();
     }
 
-    public async Task<LessonDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<LessonDto> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var cosmosResponse = await _containerFactory
             .CreateDataContainer()
