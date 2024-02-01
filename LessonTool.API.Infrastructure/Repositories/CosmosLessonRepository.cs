@@ -1,13 +1,14 @@
 ﻿using LessonTool.API.Infrastructure.Exceptions;
+using LessonTool.API.Infrastructure.Extensions;
 using LessonTool.API.Infrastructure.Interfaces;
+using LessonTool.API.Infrastructure.Models;
 using LessonTool.Common.Domain.Constants;
 using LessonTool.Common.Domain.Extensions;
 using LessonTool.Common.Domain.Models;
-using Microsoft.Azure.Cosmos;
 
 namespace LessonTool.API.Infrastructure.Repositories;
 
-public class CosmosLessonRepository : ILessonRepository
+public class CosmosLessonRepository : CosmosRepositoryBase, ILessonRepository
 {
     private readonly ICosmosContainerFactory _containerFactory;
 
@@ -15,19 +16,6 @@ public class CosmosLessonRepository : ILessonRepository
     public CosmosLessonRepository(ICosmosContainerFactory cosmosContainerFactory)
     {
         _containerFactory = cosmosContainerFactory;
-    }
-
-
-    public async Task<LessonDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        var cosmosResponse = await _containerFactory
-            .CreateDataContainer()
-            .ReadItemAsync<CosmosLesson>(id.ToString(), new(CosmosConstants.LessonTypeName), cancellationToken: cancellationToken);
-
-        if (!cosmosResponse.IsSuccess())
-            throw new CosmosActionException("Cannot get lesson from cosmos because the response did not indicate success!", cosmosResponse.StatusCode);
-
-        return cosmosResponse.Resource.ToLessonDto();
     }
 
 
@@ -41,22 +29,23 @@ public class CosmosLessonRepository : ILessonRepository
         if (max.HasValue)
             query += $" AND {nameof(CosmosLesson.VisibleDate)} < {max.Value}";
 
-        var feedIterator = _containerFactory
-            .CreateDataContainer()
-            .GetItemQueryIterator<CosmosLesson>(new QueryDefinition(query));
-        
-        var lessons = new List<CosmosLesson>();
-        while (feedIterator.HasMoreResults)
-        {
-            var response = await feedIterator.ReadNextAsync(cancellationToken);
-            lessons.AddRange(response.Resource);
-        }
-
-        return lessons
+        var items = await ReadCosmosIterator<CosmosLesson>(_containerFactory, query, cancellationToken);
+        return items
             .Select(x => x.ToLessonDto())
             .ToList();
     }
 
+    public async Task<LessonDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var cosmosResponse = await _containerFactory
+            .CreateDataContainer()
+            .ReadItemAsync<CosmosLesson>(id.ToString(), new(CosmosConstants.LessonTypeName), cancellationToken: cancellationToken);
+
+        if (!cosmosResponse.IsSuccess())
+            throw new CosmosActionException("Cannot get lesson from cosmos because the response did not indicate success!", cosmosResponse.StatusCode);
+
+        return cosmosResponse.Resource.ToLessonDto();
+    }
 
     public async Task<LessonDto> CreateAsync(LessonDto lesson, CancellationToken cancellationToken = default)
     {
@@ -84,12 +73,31 @@ public class CosmosLessonRepository : ILessonRepository
 
     public async Task<LessonDto> UpdateAsync(LessonDto lesson, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(lesson);
+
+        if (lesson.Id.IsEmpty())
+            throw new ArgumentNullException(nameof(lesson), "Cannot create a new lesson because the provided Dto already has an Id.");
+
+        //Build a valid Cosmos entity
+        var cosmosLesson = lesson.ToCosmosLesson();
+
+        //Save to database
+        var cosmosResponse = await _containerFactory
+            .CreateDataContainer()
+            .ReplaceItemAsync(cosmosLesson, cosmosLesson.Id.ToString(), new(CosmosConstants.LessonTypeName));
+
+        //If the resource wasn't created, throw an exception
+        if (!cosmosResponse.IsCreated())
+            throw new CosmosActionException($"Failed to create lesson [{lesson.Id}]", cosmosResponse.StatusCode);
+
+        return cosmosResponse.Resource.ToLessonDto();
     }
 
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await _containerFactory
+            .CreateDataContainer()
+            .DeleteItemAsync<CosmosLesson>(id.ToString(), new(CosmosConstants.LessonTypeName), cancellationToken: cancellationToken);
     }
 }

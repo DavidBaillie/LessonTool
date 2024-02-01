@@ -1,8 +1,9 @@
-﻿using LessonTool.Common.Domain.Models;
+﻿using LessonTool.API.Infrastructure.Models;
+using LessonTool.Common.Domain.Models;
 
-namespace LessonTool.Common.Domain.Extensions;
+namespace LessonTool.API.Infrastructure.Extensions;
 
-public static class LessonExtensions
+public static class CosmosLessonExtensions
 {
     public static LessonDto ToLessonDto(this CosmosLesson lesson, IEnumerable<CosmosSection> sections = null)
     {

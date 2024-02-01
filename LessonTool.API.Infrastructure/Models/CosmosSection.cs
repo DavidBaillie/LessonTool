@@ -1,6 +1,6 @@
 ﻿using LessonTool.Common.Domain.Constants;
 
-namespace LessonTool.Common.Domain.Models;
+namespace LessonTool.API.Infrastructure.Models;
 
 public class CosmosSection
 {
