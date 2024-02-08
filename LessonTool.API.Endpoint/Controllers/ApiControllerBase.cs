@@ -23,7 +23,7 @@ public abstract class ApiControllerBase<T> : ControllerBase where T : EntityDtoB
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<ActionResult<T>> PostAsync([FromBody] T inboundEntity, CancellationToken cancellationToken)
+    public virtual async Task<ActionResult<T>> PostAsync([FromBody] T inboundEntity, CancellationToken cancellationToken)
     {
         var entity = await _repository.CreateAsync(inboundEntity, cancellationToken);
         return CreatedAtAction(nameof(GetAsync), new { entity.Id }, entity);
@@ -31,7 +31,7 @@ public abstract class ApiControllerBase<T> : ControllerBase where T : EntityDtoB
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult> PutAsync([FromBody] T inboundEntity, CancellationToken cancellationToken)
+    public virtual async Task<ActionResult> PutAsync([FromBody] T inboundEntity, CancellationToken cancellationToken)
     {
         await _repository.UpdateAsync(inboundEntity, cancellationToken);
         return Ok();
@@ -39,7 +39,7 @@ public abstract class ApiControllerBase<T> : ControllerBase where T : EntityDtoB
 
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<ActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
+    public virtual async Task<ActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
         await _repository.DeleteAsync(id, cancellationToken);
         return NoContent();

@@ -5,7 +5,7 @@ namespace LessonTool.API.Infrastructure.Repositories;
 
 public abstract class CosmosRepositoryBase
 {
-    public async Task<List<T>> ReadCosmosIterator<T>(ICosmosContainerFactory containerFactory, string query, CancellationToken cancellationToken = default)
+    public virtual async Task<List<T>> ReadCosmosIterator<T>(ICosmosContainerFactory containerFactory, string query, CancellationToken cancellationToken = default)
         where T : class
     {
         var feedIterator = containerFactory
