@@ -29,7 +29,7 @@ public abstract class ApiControllerBase<T> : ControllerBase where T : EntityDtoB
         return CreatedAtAction(nameof(GetAsync), new { entity.Id }, entity);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult> PutAsync([FromBody] T inboundEntity, CancellationToken cancellationToken)
     {

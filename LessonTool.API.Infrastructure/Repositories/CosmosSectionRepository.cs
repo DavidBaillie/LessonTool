@@ -79,8 +79,8 @@ public class CosmosSectionRepository : CosmosRepositoryBase, ISectionRepository
             .ReplaceItemAsync(cosmosSection, cosmosSection.Id.ToString(), new(CosmosConstants.SectionTypeName));
 
         //If the resource wasn't created, throw an exception
-        if (!cosmosResponse.IsCreated())
-            throw new CosmosActionException($"Failed to create lesson [{section.Id}]", cosmosResponse.StatusCode);
+        if (!cosmosResponse.IsSuccess())
+            throw new CosmosActionException($"Failed to create lesson [{section.Id}] - [{cosmosResponse.StatusCode}]", cosmosResponse.StatusCode);
 
         return cosmosResponse.Resource.ToSectionDto();
     }

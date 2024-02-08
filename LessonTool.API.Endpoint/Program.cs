@@ -19,8 +19,11 @@ public class Program
         builder.Services.AddScoped<ISectionRepository, CosmosSectionRepository>();
         builder.Services.AddScoped<ICosmosContainerFactory, CosmosContainerFactory>();
 
-        builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddControllers(options =>
+        {
+            options.SuppressAsyncSuffixInActionNames = false;
+        });
+        
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 

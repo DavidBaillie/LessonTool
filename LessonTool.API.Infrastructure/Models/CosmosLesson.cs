@@ -1,9 +1,11 @@
 ﻿using LessonTool.API.Infrastructure.Constants;
+using Newtonsoft.Json;
 
 namespace LessonTool.API.Infrastructure.Models;
 
 public class CosmosLesson
 {
+    [JsonProperty(PropertyName = "id")]
     public Guid Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }

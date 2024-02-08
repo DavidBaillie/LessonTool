@@ -65,7 +65,7 @@ public class CosmosLessonRepository : CosmosRepositoryBase, ILessonRepository
 
         //If the resource wasn't created, throw an exception
         if (!cosmosResponse.IsCreated())
-            throw new CosmosActionException($"Failed to create lesson [{lesson.Id}]", cosmosResponse.StatusCode);
+            throw new CosmosActionException($"Failed to create lesson [{lesson.Id}] - Status Code [{cosmosResponse.StatusCode}]", cosmosResponse.StatusCode);
 
         return cosmosResponse.Resource.ToLessonDto();
     }
@@ -87,8 +87,8 @@ public class CosmosLessonRepository : CosmosRepositoryBase, ILessonRepository
             .ReplaceItemAsync(cosmosLesson, cosmosLesson.Id.ToString(), new(CosmosConstants.LessonTypeName));
 
         //If the resource wasn't created, throw an exception
-        if (!cosmosResponse.IsCreated())
-            throw new CosmosActionException($"Failed to create lesson [{lesson.Id}]", cosmosResponse.StatusCode);
+        if (!cosmosResponse.IsSuccess())
+            throw new CosmosActionException($"Failed to create lesson [{lesson.Id}] - [{cosmosResponse.StatusCode}]", cosmosResponse.StatusCode);
 
         return cosmosResponse.Resource.ToLessonDto();
     }
