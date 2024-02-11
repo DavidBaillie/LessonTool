@@ -5,6 +5,7 @@ using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.API.Infrastructure.Models;
 using LessonTool.Common.Domain.Exceptions;
 using LessonTool.Common.Domain.Extensions;
+using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Models;
 using Microsoft.Azure.Cosmos;
 

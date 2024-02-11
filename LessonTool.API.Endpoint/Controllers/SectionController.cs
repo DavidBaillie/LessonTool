@@ -1,4 +1,4 @@
-﻿using LessonTool.API.Infrastructure.Interfaces;
+﻿using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 

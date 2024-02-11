@@ -1,7 +1,6 @@
-﻿using LessonTool.Common.Domain.Interfaces;
-using LessonTool.Common.Domain.Models;
+﻿using LessonTool.Common.Domain.Models;
 
-namespace LessonTool.API.Infrastructure.Interfaces;
+namespace LessonTool.Common.Domain.Interfaces;
 
 public interface ILessonRepository : IRepository<LessonDto>
 {

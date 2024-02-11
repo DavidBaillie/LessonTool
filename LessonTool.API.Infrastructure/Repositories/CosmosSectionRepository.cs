@@ -1,12 +1,13 @@
 ﻿using LessonTool.API.Infrastructure.Constants;
 using LessonTool.API.Infrastructure.Exceptions;
 using LessonTool.API.Infrastructure.Extensions;
-using LessonTool.API.Infrastructure.Interfaces;
+using LessonTool.Common.Domain.Interfaces;
 using LessonTool.API.Infrastructure.Models;
 using LessonTool.Common.Domain.Exceptions;
 using LessonTool.Common.Domain.Extensions;
 using LessonTool.Common.Domain.Models;
 using Microsoft.Azure.Cosmos;
+using LessonTool.API.Infrastructure.Interfaces;
 
 namespace LessonTool.API.Infrastructure.Repositories;
 

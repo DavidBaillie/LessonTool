@@ -1,7 +1,9 @@
 ﻿@page "/"
 
+@inject ILessonRepository lessonRepository
+
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<p>Home Page</p>
 
-Welcome to your new app.
+<LessonTool.UI.WebApp.Components.LessonList LessonRepisitory="@lessonRepository" />

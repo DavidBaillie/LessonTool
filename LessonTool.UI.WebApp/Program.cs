@@ -1,3 +1,6 @@
+using LessonTool.Common.Domain.Interfaces;
+using LessonTool.UI.Infrastructure.Constants;
+using LessonTool.UI.Infrastructure.HttpServices;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -12,6 +15,11 @@ namespace LessonTool.UI.WebApp
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddHttpClient(ApiEndpointConstants.LessonsEndpoint, options =>
+            {
+                options.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+            });
+            builder.Services.AddScoped<ILessonRepository, LessonApiService>();
 
             await builder.Build().RunAsync();
         }

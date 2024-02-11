@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LessonTool.Common.Domain\LessonTool.Common.Domain.csproj" />
+    <ProjectReference Include="..\LessonTool.UI.Infrastructure\LessonTool.UI.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

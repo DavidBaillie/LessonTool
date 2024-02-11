@@ -3,6 +3,7 @@ using LessonTool.API.Infrastructure.Factories;
 using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.API.Infrastructure.Options;
 using LessonTool.API.Infrastructure.Repositories;
+using LessonTool.Common.Domain.Interfaces;
 
 namespace LessonTool.API.Endpoint;
 
