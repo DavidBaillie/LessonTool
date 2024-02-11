@@ -50,6 +50,7 @@ public class CosmosSectionRepository : CosmosRepositoryBase, ISectionRepository
         //Build a valid Cosmos entity
         var cosmosSection = section.ToCosmosSection();
         cosmosSection.Id = Guid.NewGuid();
+        cosmosSection.CreatedDate = DateTime.UtcNow;
 
         //Save to database
         var cosmosResponse = await _containerFactory

@@ -10,6 +10,7 @@ public static class CosmosSectionExtensions
         return new SectionDto()
         {
             Id = section.Id,
+            LessonId = section.LessonId,
             Title = section.Title,
             Content = section.Content,
             CreatedDate = section.CreatedDate
@@ -21,6 +22,7 @@ public static class CosmosSectionExtensions
         return new CosmosSection()
         {
             Id = section.Id,
+            LessonId = section.LessonId,
             Title = section.Title,
             Content = section.Content,
             CreatedDate = section.CreatedDate
