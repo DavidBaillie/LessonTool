@@ -1,3 +1,4 @@
+using LessonTool.API.Endpoint.Middleware;
 using LessonTool.API.Infrastructure.Factories;
 using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.API.Infrastructure.Options;
@@ -40,6 +41,9 @@ public class Program
 
         app.UseAuthorization();
 
+        //TODO - Enable this later when everything is working
+        //app.UseMiddleware<InternalServerErrorMiddleware>();
+        //app.UseMiddleware<DataAccessErrorMiddleware>();
 
         app.MapControllers();
 
