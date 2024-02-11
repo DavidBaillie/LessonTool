@@ -1,20 +1,25 @@
 ﻿using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.Common.Domain.Models;
+using LessonTool.Common.Domain.Utilities;
+using LessonTool.UI.Infrastructure.Constants;
 
 namespace LessonTool.UI.Infrastructure.HttpServices;
 
 public class SectionApiService : ApiServiceBase<SectionDto>, ISectionRepository
 {
-    private const string _sectionApiPath = "api/sections";
-
     public SectionApiService(IServiceProvider serviceProvider) 
-        : base(serviceProvider, "SectionClient", _sectionApiPath)
+        : base(serviceProvider, "SectionClient", ApiEndpointConstants.SectionsEndpoint)
     {
 
     }
 
-    public Task<List<SectionDto>> GetSectionsByLessonAsync(Guid lessonId, CancellationToken cancellationToken = default)
+    public async Task<List<SectionDto>> GetSectionsByLessonAsync(Guid lessonId, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        using var client = await GetClient();
+
+        var response = await client.GetAsync($"{ApiEndpointConstants.LessonsEndpoint}/{lessonId}/sections", cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        return await HttpUtilities.DeserializeResponseAsync<List<SectionDto>>(response, jsonOptions, cancellationToken);
     }
 }

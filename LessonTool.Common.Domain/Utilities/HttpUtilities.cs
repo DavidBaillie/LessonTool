@@ -13,7 +13,7 @@ public static class HttpUtilities
                 Encoding.UTF8, "application/json");
     }
 
-    public static async Task<T> DeserializeResponse<T>(HttpResponseMessage message, JsonSerializerOptions jsonOptions, CancellationToken cancellationToken = default)
+    public static async Task<T> DeserializeResponseAsync<T>(HttpResponseMessage message, JsonSerializerOptions jsonOptions, CancellationToken cancellationToken = default)
     {
         var payload = await message.Content.ReadAsStringAsync(cancellationToken);
         return JsonSerializer.Deserialize<T>(payload, jsonOptions);

@@ -41,7 +41,7 @@ public abstract class ApiServiceBase<T> : IRepository<T> where T : class
         var response = await client.GetAsync(_apiEndpoint, cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        return await DeserializeResponse<List<T>>(response, jsonOptions, cancellationToken);
+        return await DeserializeResponseAsync<List<T>>(response, jsonOptions, cancellationToken);
     }
 
     public virtual async Task<T> GetAsync(Guid id, CancellationToken cancellationToken = default)
@@ -51,7 +51,7 @@ public abstract class ApiServiceBase<T> : IRepository<T> where T : class
         var response = await client.GetAsync(BuildQueryString(_apiEndpoint, new() { { nameof(id), id.ToString() } }), cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        return await DeserializeResponse<T>(response, jsonOptions, cancellationToken);
+        return await DeserializeResponseAsync<T>(response, jsonOptions, cancellationToken);
     }
 
     public virtual async Task<T> CreateAsync(T entity, CancellationToken cancellationToken = default)
@@ -61,7 +61,7 @@ public abstract class ApiServiceBase<T> : IRepository<T> where T : class
         var response = await client.PostAsync(_apiEndpoint, GeneratePayload(entity, jsonOptions), cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        return await DeserializeResponse<T>(response, jsonOptions, cancellationToken);
+        return await DeserializeResponseAsync<T>(response, jsonOptions, cancellationToken);
     }
 
     public virtual async Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default)
@@ -71,7 +71,7 @@ public abstract class ApiServiceBase<T> : IRepository<T> where T : class
         var response = await client.PutAsync(_apiEndpoint, GeneratePayload(entity, jsonOptions), cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        return await DeserializeResponse<T>(response, jsonOptions, cancellationToken);
+        return await DeserializeResponseAsync<T>(response, jsonOptions, cancellationToken);
     }
 
     public virtual async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
