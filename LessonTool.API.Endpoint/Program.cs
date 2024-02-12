@@ -4,6 +4,7 @@ using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.API.Infrastructure.Options;
 using LessonTool.API.Infrastructure.Repositories;
 using LessonTool.Common.Domain.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace LessonTool.API.Endpoint;
 
@@ -25,9 +26,11 @@ public class Program
         {
             options.SuppressAsyncSuffixInActionNames = false;
         });
-        
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddCors();
 
         var app = builder.Build();
 
@@ -36,6 +39,15 @@ public class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+
+            app.UseCors(options => options
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod());
+        }
+        else
+        {
+            //TODO - Configure CORS
         }
 
         app.UseHttpsRedirection();

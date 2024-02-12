@@ -8,7 +8,7 @@ namespace LessonTool.UI.Infrastructure.HttpServices;
 public class SectionApiService : ApiServiceBase<SectionDto>, ISectionRepository
 {
     public SectionApiService(IServiceProvider serviceProvider) 
-        : base(serviceProvider, "SectionClient", ApiEndpointConstants.SectionsEndpoint)
+        : base(serviceProvider, ApiEndpointConstants.CommonApiClientName, ApiEndpointConstants.SectionsEndpoint)
     {
 
     }

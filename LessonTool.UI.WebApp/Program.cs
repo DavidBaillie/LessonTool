@@ -15,11 +15,13 @@ namespace LessonTool.UI.WebApp
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddHttpClient(ApiEndpointConstants.LessonsEndpoint, options =>
+            builder.Services.AddHttpClient(ApiEndpointConstants.CommonApiClientName, options =>
             {
-                options.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+                options.BaseAddress = new Uri("localhost:44360");
             });
+
             builder.Services.AddScoped<ILessonRepository, LessonApiService>();
+            builder.Services.AddScoped<ISectionRepository, SectionApiService>();
 
             await builder.Build().RunAsync();
         }

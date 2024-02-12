@@ -9,7 +9,7 @@ namespace LessonTool.UI.Infrastructure.HttpServices;
 public class LessonApiService : ApiServiceBase<LessonDto>, ILessonRepository
 {
     public LessonApiService(IServiceProvider serviceProvider) 
-        : base(serviceProvider, "LessonClient", ApiEndpointConstants.LessonsEndpoint)
+        : base(serviceProvider, ApiEndpointConstants.CommonApiClientName, ApiEndpointConstants.LessonsEndpoint)
     {
 
     }
@@ -19,6 +19,7 @@ public class LessonApiService : ApiServiceBase<LessonDto>, ILessonRepository
         using var client = await GetClient();
 
         var query = QueryHelpers.AddQueryString(ApiEndpointConstants.LessonsEndpoint, new Dictionary<string, string> { { "min", $"{min}" }, { "max", $"{max}" } });
+        Console.WriteLine($"Query: {client.BaseAddress}/{query}");
         var response = await client.GetAsync(query, cancellationToken);
         response.EnsureSuccessStatusCode();
 
