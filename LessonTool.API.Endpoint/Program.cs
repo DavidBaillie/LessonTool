@@ -30,9 +30,18 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        builder.Services.AddCors();
+        builder.Services.AddCors(policy => {
+
+            policy.AddPolicy("CORS_Policy", builder =>
+              builder.WithOrigins("*")
+                .SetIsOriginAllowedToAllowWildcardSubdomains()
+                .AllowAnyOrigin()
+                .AllowAnyMethod());
+        });
+
 
         var app = builder.Build();
+
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -40,18 +49,11 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
 
-            app.UseCors(options => options
-                .AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod());
-        }
-        else
-        {
-            //TODO - Configure CORS
+            
         }
 
+        app.UseCors("CORS_Policy");
         app.UseHttpsRedirection();
-
         app.UseAuthorization();
 
         //TODO - Enable this later when everything is working
