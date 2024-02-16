@@ -8,6 +8,7 @@ public partial class LessonList
 {
     [Parameter]
     public ILessonRepository LessonRepisitory { get; set; }
+    
     private List<LessonDto> lessons = new();
 
 
@@ -20,7 +21,7 @@ public partial class LessonList
         }
         catch (Exception ex)
         {
-            lessons = new();
+            
         }
     }
 }

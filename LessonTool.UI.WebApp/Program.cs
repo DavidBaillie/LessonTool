@@ -20,8 +20,8 @@ namespace LessonTool.UI.WebApp
                 options.BaseAddress = new Uri("https://localhost:44360");
             });
 
-            builder.Services.AddScoped<ILessonRepository, LessonApiService>();
-            builder.Services.AddScoped<ISectionRepository, SectionApiService>();
+            builder.Services.AddScoped<ILessonRepository, MockLessonApiService>();
+            builder.Services.AddScoped<ISectionRepository, MockSectionApiService>();
 
             await builder.Build().RunAsync();
         }
