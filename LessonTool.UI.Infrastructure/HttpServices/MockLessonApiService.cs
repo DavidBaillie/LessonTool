@@ -43,7 +43,7 @@ public class MockLessonApiService : ILessonRepository
 
     public Task<List<LessonDto>> GetAllInDateRangeAsync(DateTime? min = null, DateTime? max = null, CancellationToken cancellationToken = default)
     {
-        var collection = lessons.Where(x => x.CreatedDate > min && x.CreatedDate < max).ToList();
+        var collection = lessons.Where(x => (min is null || x.CreatedDate > min) && (max is null || x.CreatedDate < max)).ToList();
         return Task.FromResult(collection);
     }
 
