@@ -13,7 +13,7 @@ public class MockLessonApiService : ILessonRepository
             Name = "Lorem ipsum dolor sit",
             Description = "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa",
             VisibleDate = DateTime.MinValue,
-            CreatedDate = DateTime.MinValue,
+            PlannedDate = DateTime.UtcNow,
             Sections = new List<SectionDto>()
         },
         new LessonDto()
@@ -22,7 +22,7 @@ public class MockLessonApiService : ILessonRepository
             Name = "Quis nostrud exercitation ullamco",
             Description = "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa",
             VisibleDate = DateTime.MinValue,
-            CreatedDate = DateTime.MinValue,
+            PlannedDate = DateTime.UtcNow.AddDays(1),
             Sections = new List<SectionDto>()
         }
     };
@@ -43,7 +43,7 @@ public class MockLessonApiService : ILessonRepository
 
     public Task<List<LessonDto>> GetAllInDateRangeAsync(DateTime? min = null, DateTime? max = null, CancellationToken cancellationToken = default)
     {
-        var collection = lessons.Where(x => (min is null || x.CreatedDate > min) && (max is null || x.CreatedDate < max)).ToList();
+        var collection = lessons.Where(x => (min is null || x.VisibleDate > min) && (max is null || x.VisibleDate < max)).ToList();
         return Task.FromResult(collection);
     }
 

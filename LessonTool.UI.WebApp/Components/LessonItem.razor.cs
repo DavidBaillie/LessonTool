@@ -10,4 +10,5 @@ public partial class LessonItem
 
     private string lessonName { get => Lesson is null ? "N/A" : Lesson.Name; }
     private string lessonDescription { get => Lesson is null ?  "N/A" : Lesson.Description; }
+    private string lessonPlannedDatetime { get => Lesson is null ? "N/A" : Lesson.PlannedDate.ToString("dd/MM/yyyy"); }
 }

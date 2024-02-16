@@ -76,7 +76,7 @@ public class CosmosLessonRepository : CosmosRepositoryBase, ILessonRepository
             //Build a valid Cosmos entity
             var cosmosLesson = lesson.ToCosmosLesson();
             cosmosLesson.Id = Guid.NewGuid();
-            cosmosLesson.CreatedDate = DateTime.UtcNow;
+            cosmosLesson.PlannedDate = DateTime.UtcNow;
 
             //Save to database
             var cosmosResponse = await _containerFactory

@@ -1,8 +1,10 @@
 ﻿@inherits BaseComponent<LessonList>
 
-<div class="mx-5">
+<div class="m-5 d-flex flex-column align-items-center">
     @foreach (var lesson in lessons)
     {
-        <LessonItem Lesson="@lesson" />
+        <div class="mb-4" style="max-width: 100rem; min-width: 75rem;">
+            <LessonItem Lesson="@lesson" />
+        </div>
     }
 </div>

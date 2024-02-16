@@ -12,7 +12,7 @@ public static class CosmosLessonExtensions
             Id = lesson.Id,
             Name = lesson.Name,
             Description = lesson.Description,
-            CreatedDate = lesson.CreatedDate,
+            PlannedDate = lesson.PlannedDate,
             VisibleDate = lesson.VisibleDate,
             Sections = sections is null ? new() : sections.Select(x => x.ToSectionDto()).ToList()
         };
@@ -25,7 +25,7 @@ public static class CosmosLessonExtensions
             Id = lesson.Id,
             Name = lesson.Name,
             Description = lesson.Description,
-            CreatedDate = lesson.CreatedDate,
+            PlannedDate = lesson.PlannedDate,
             VisibleDate = lesson.VisibleDate
         };
     }
