@@ -1,4 +1,5 @@
 using LessonTool.Common.Domain.Interfaces;
+using LessonTool.Common.Domain.Models;
 using LessonTool.UI.Infrastructure.Constants;
 using LessonTool.UI.Infrastructure.HttpServices;
 using Microsoft.AspNetCore.Components.Web;
@@ -18,6 +19,8 @@ namespace LessonTool.UI.WebApp
             {
                 options.BaseAddress = new Uri("https://localhost:44360");
             });
+
+            builder.Services.AddScoped<IRepository<LessonDto>, MockLessonApiService>();
 
             builder.Services.AddScoped<ILessonRepository, MockLessonApiService>();
             builder.Services.AddScoped<ISectionRepository, MockSectionApiService>();

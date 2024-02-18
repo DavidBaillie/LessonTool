@@ -1,10 +1,10 @@
-﻿@page "/lessons/{Id}"
+﻿@page "/lessons"
 
 @using LessonTool.UI.WebApp.Components
 
 @inherits BaseComponent<LessonPage>
 
-@if(displayLesson is null)
+@if(lessonAccessor is null)
 {
     <div class="d-flex flex-row justify-content-center">
         <p>Failed to find matching lesson</p>
@@ -12,7 +12,12 @@
 }
 else
 {
-    <div class="d-flex flex-column align-items-center">
-
+    <div class="d-flex flex-column">
+        <div class="mb-3">
+            <LessonHeader Lesson="@lessonAccessor.Lesson" />
+        </div>
+        <div>
+            <SectionList LessonId="@lessonAccessor.Lesson.Id" SectionsRepository="@lessonAccessor" />
+        </div>
     </div>
 }

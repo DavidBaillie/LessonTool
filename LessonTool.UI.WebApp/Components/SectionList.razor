@@ -1,1 +1,10 @@
 ﻿@inherits BaseComponent<SectionList>
+
+<div class="d-flex flex-column mx-3">
+    @foreach(var item in sections)
+    {
+        <div class="mb-3">
+            <SectionItem Section="@item" />
+        </div>
+    }
+</div>
