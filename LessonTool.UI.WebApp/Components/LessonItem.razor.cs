@@ -8,6 +8,8 @@ public partial class LessonItem
     [Parameter]
     public LessonDto Lesson { get; set; }
 
+    private string lessonLink => $"/lessons/{Lesson.Id}";
+
     private string lessonName { get => Lesson is null ? "N/A" : Lesson.Name; }
     private string lessonDescription { get => Lesson is null ?  "N/A" : Lesson.Description; }
     private string lessonPlannedDatetime { get => Lesson is null ? "N/A" : Lesson.PlannedDate.ToString("dd/MM/yyyy"); }

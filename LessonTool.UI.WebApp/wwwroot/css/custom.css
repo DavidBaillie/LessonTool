@@ -1,0 +1,28 @@
+﻿.lesson-item {
+    margin: 1rem 7rem;
+    width: 100%;
+    max-width: 70rem;
+}
+
+.no-link {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+    .no-link:hover:not(h1) {
+        color: inherit;
+        text-decoration: inherit;
+    }
+
+    .no-link:hover h1 {
+        color: rgb(0, 43, 131);
+        text-decoration: inherit;
+    }
+
+
+@media (max-width: 998px){
+    .lesson-item {
+        max-width: 100%;
+        margin: 1rem 3rem;
+    }
+}
