@@ -1,13 +1,12 @@
-﻿using LessonTool.Common.Domain.Interfaces;
-using LessonTool.Common.Domain.Models;
+﻿using LessonTool.Common.Domain.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace LessonTool.UI.WebApp.Components;
 
 public partial class LessonList
 {
-    [Parameter]
-    public ILessonRepository LessonRepisitory { get; set; }
+    [Parameter, EditorRequired]
+    public Func<Task<List<LessonDto>>> LessonDataSource { get; set; }
     
     private List<LessonDto> lessons = new();
 
@@ -17,7 +16,7 @@ public partial class LessonList
         try
         {
             await base.OnInitializedAsync();
-            lessons = await LessonRepisitory.GetAllInDateRangeAsync(null, null, cancellationToken);
+            lessons = await LessonDataSource.Invoke();
         }
         catch (Exception ex)
         {
