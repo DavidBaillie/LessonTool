@@ -6,11 +6,8 @@ namespace LessonTool.UI.WebApp.Components;
 
 public partial class SectionList
 {
-    [Parameter]
-    public Guid LessonId { get; set; }
-
-    [Parameter]
-    public ISectionRepository SectionsRepository { get; set; }
+    [Parameter, EditorRequired]
+    public Func<Task<List<SectionDto>>> SectionsSource { get; set; }
 
     private List<SectionDto> sections = new();
 
@@ -19,7 +16,7 @@ public partial class SectionList
         try
         {
             await base.OnInitializedAsync();
-            sections = await SectionsRepository.GetSectionsByLessonAsync(LessonId, cancellationToken);
+            sections = await SectionsSource.Invoke();
         }
         catch (Exception ex)
         {

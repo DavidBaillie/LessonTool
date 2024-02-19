@@ -4,7 +4,7 @@
 
 @inherits BaseComponent<LessonPage>
 
-@if(lessonAccessor is null)
+@if(lesson is null)
 {
     <div class="d-flex flex-row justify-content-center">
         <p>Failed to find matching lesson</p>
@@ -14,10 +14,10 @@ else
 {
     <div class="d-flex flex-column">
         <div class="mb-3">
-            <LessonHeader Lesson="@lessonAccessor.Lesson" />
+            <LessonHeader Lesson="@lesson" />
         </div>
         <div>
-            <SectionList LessonId="@lessonAccessor.Lesson.Id" SectionsRepository="@lessonAccessor" />
+            <SectionList SectionsSource="@(async () => lesson.Sections)" />
         </div>
     </div>
 }

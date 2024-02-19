@@ -8,12 +8,12 @@ namespace LessonTool.UI.WebApp.Pages;
 public partial class LessonPage
 {
     [Inject]
-    private IRepository<LessonDto> lessonRepository {  get; set; }  
+    private ILessonRepository lessonRepository {  get; set; }  
 
     [Inject]
     private ISectionRepository sectionRepository { get; set; }
 
-    private LessonAccessorComposite lessonAccessor = null;
+    private LessonDto lesson = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -27,33 +27,7 @@ public partial class LessonPage
 
         await Task.WhenAll(sectionsLoadTask, lessonLoadTask);
 
-        lessonAccessor = new(lessonLoadTask.Result, sectionsLoadTask.Result);
-    }
-
-    private class LessonAccessorComposite : ISectionRepository
-    {
-        public LessonDto Lesson { get; set; }
-
-        public LessonAccessorComposite(LessonDto lesson, List<SectionDto> sections)
-        {
-            Lesson = lesson;
-            Lesson.Sections = sections;
-        }
-
-
-        public Task<List<SectionDto>> GetSectionsByLessonAsync(Guid lessonId, CancellationToken cancellationToken = default)
-        {
-            return Task.FromResult(Lesson.Sections);
-        }
-
-
-        public Task<SectionDto> CreateAsync(SectionDto entity, CancellationToken cancellationToken = default)
-            => throw new NotImplementedException();
-        public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
-            => throw new NotImplementedException();
-        public Task<SectionDto> GetAsync(Guid id, CancellationToken cancellationToken = default)
-            => throw new NotImplementedException();
-        public Task<SectionDto> UpdateAsync(SectionDto entity, CancellationToken cancellationToken = default)
-            => throw new NotImplementedException();
+        lesson = lessonLoadTask.Result;
+        lesson.Sections = sectionsLoadTask.Result;
     }
 }
