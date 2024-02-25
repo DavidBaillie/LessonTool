@@ -1,0 +1,55 @@
+﻿@inherits BaseComponent<LessonEditor>
+
+@if (lessonFailedToLoad)
+{
+    <div class="d-flex flex-row justify-content-center">
+        <p>@failureMessage</p>
+    </div>
+}
+else
+{
+    <div>
+        <EditForm EditContext="@editContext">
+            <div class="d-flex flex-column">
+                <div class="d-flex flex-row justify-content-end">
+                    <button class="btn btn-primary" onclick="@(async () => await TrySaveFormModelAsync())">
+                        @($"{(lesson.Id == Guid.Empty ? "Create Lesson" : "Save Lesson")}")
+                    </button>
+                </div>
+
+                <div class="d-flex flex-column">
+                    <div>
+                        <label>Lesson Title</label>
+                        <input />
+                    </div>
+                    <div>
+                        <label>Lesson Description</label>
+                        <textarea />
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column">
+                    @foreach (var section in lesson.Sections)
+                    {
+                        <div>
+                            <div>
+                                <label>Section Title</label>
+                                <input />
+                            </div>
+                            <div>
+                                <label>Section Description</label>
+                                <textarea />
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="d-flex flex-row justify-content-end">
+                    <button class="btn btn-primary" onclick="@(() => AddSection())">
+                        Add Section
+                    </button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+}

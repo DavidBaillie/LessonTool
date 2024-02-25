@@ -1,7 +1,7 @@
 ﻿using LessonTool.Common.Domain.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace LessonTool.UI.WebApp.Components;
+namespace LessonTool.UI.WebApp.Components.Lesson;
 
 public partial class LessonHeader
 {

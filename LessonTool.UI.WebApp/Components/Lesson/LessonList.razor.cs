@@ -1,13 +1,13 @@
 ﻿using LessonTool.Common.Domain.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace LessonTool.UI.WebApp.Components;
+namespace LessonTool.UI.WebApp.Components.Lesson;
 
 public partial class LessonList
 {
     [Parameter, EditorRequired]
     public Func<Task<List<LessonDto>>> LessonDataSource { get; set; }
-    
+
     private List<LessonDto> lessons = new();
 
 
@@ -20,7 +20,7 @@ public partial class LessonList
         }
         catch (Exception ex)
         {
-            
+
         }
     }
 }
