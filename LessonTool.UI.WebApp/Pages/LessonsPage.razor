@@ -1,0 +1,9 @@
+﻿@page "/lessons"
+
+@inherits BaseComponent<LessonsPage>
+
+@using LessonTool.UI.WebApp.Components.Lesson
+
+<div>
+    <LessonList LessonDataSource="@(() => lessonRepository.GetAllInDateRangeAsync(null, null, cancellationToken))" />
+</div>
