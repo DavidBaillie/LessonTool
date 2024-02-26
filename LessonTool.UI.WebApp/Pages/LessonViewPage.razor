@@ -9,10 +9,7 @@
     <div>
         <LessonHeader Lesson="@lesson" />
     </div>
-    @foreach (var sec in lesson.Sections)
-    {
-        <div>
-            <SectionItem Section="@sec" />
-        </div>
-    }
+    <div>
+        <SectionList SectionsSource="@(() => Task.FromResult(lesson.Sections))" />
+    </div>
 </div>
