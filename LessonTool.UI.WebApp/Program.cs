@@ -1,5 +1,7 @@
 using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Models;
+using LessonTool.UI.Application.Interfaces;
+using LessonTool.UI.Application.Repositories;
 using LessonTool.UI.Infrastructure.Constants;
 using LessonTool.UI.Infrastructure.HttpServices;
 using Microsoft.AspNetCore.Components.Web;
@@ -22,6 +24,7 @@ namespace LessonTool.UI.WebApp
 
             builder.Services.AddScoped<ILessonRepository, MockLessonApiService>();
             builder.Services.AddScoped<ISectionRepository, MockSectionApiService>();
+            builder.Services.AddScoped<IFullLessonRepository, FullLessonRepository>();
 
             await builder.Build().RunAsync();
         }

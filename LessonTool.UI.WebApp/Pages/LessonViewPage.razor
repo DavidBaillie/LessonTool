@@ -1,0 +1,18 @@
+﻿@page "/lesson"
+
+@inherits BaseComponent<LessonViewPage>
+
+@using LessonTool.UI.WebApp.Components.Lesson
+@using LessonTool.UI.WebApp.Components.Section
+
+<div>
+    <div>
+        <LessonHeader Lesson="@lesson" />
+    </div>
+    @foreach (var sec in lesson.Sections)
+    {
+        <div>
+            <SectionItem Section="@sec" />
+        </div>
+    }
+</div>

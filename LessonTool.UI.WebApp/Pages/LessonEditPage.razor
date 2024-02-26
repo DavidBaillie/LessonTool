@@ -4,6 +4,12 @@
 @using LessonTool.UI.WebApp.Components.Lesson
 @inherits BaseComponent<LessonEditPage>
 
-<div>
-    <LessonEditor LessonId="@lessonId" LessonRepository="@LessonRepository" SectionRepository="@SectionRepository" />
+<div class="editor-size">
+    <div class="card">
+        <div class="card-body">
+            <div>
+                <LessonEditor LessonId="@lessonId" LessonRepository="@fullLessonRepository" />
+            </div>
+        </div>
+    </div>
 </div>

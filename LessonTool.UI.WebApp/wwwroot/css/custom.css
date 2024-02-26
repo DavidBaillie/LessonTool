@@ -19,10 +19,20 @@
         text-decoration: inherit;
     }
 
+.editor-size {
+    margin: 2rem;
+    width: 100%;
+    max-width: 100rem;
+}
+
 
 @media (max-width: 998px){
     .lesson-item {
         max-width: 100%;
         margin: 1rem 3rem;
+    }
+
+    .editor-size {
+        max-width: 100vw;
     }
 }

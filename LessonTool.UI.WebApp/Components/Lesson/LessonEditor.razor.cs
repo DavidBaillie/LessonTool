@@ -3,7 +3,6 @@ using LessonTool.Common.Domain.Models;
 using LessonTool.UI.WebApp.FormModels;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
-using System.Threading;
 using LessonTool.UI.WebApp.Extensions;
 
 namespace LessonTool.UI.WebApp.Components.Lesson
@@ -15,9 +14,6 @@ namespace LessonTool.UI.WebApp.Components.Lesson
 
         [Parameter]
         public ILessonRepository LessonRepository { get; set; }
-
-        [Parameter]
-        public ISectionRepository SectionRepository { get; set; }
 
         private LessonFormModel lesson = new();
         private EditContext editContext = new(new object());
@@ -31,13 +27,7 @@ namespace LessonTool.UI.WebApp.Components.Lesson
 
             try
             {
-                var lessonLoadTask = LessonRepository.GetAsync(LessonId, cancellationToken);
-                var sectionsLoadTask = SectionRepository.GetSectionsByLessonAsync(LessonId, cancellationToken);
-
-                await Task.WhenAll(sectionsLoadTask, lessonLoadTask);
-
-                LessonDto dto = lessonLoadTask.Result;
-                dto.Sections = sectionsLoadTask.Result;
+                var dto = await LessonRepository.GetAsync(LessonId, cancellationToken);
 
                 lesson = dto.ToLessonFormModel();
                 editContext = new(lesson);

@@ -5,4 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LessonTool.Common.Domain\LessonTool.Common.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
