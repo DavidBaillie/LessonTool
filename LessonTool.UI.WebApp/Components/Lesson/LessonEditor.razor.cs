@@ -29,7 +29,7 @@ namespace LessonTool.UI.WebApp.Components.Lesson
             {
                 var dto = await LessonRepository.GetAsync(LessonId, cancellationToken);
 
-                lesson = dto.ToLessonFormModel();
+                lesson = dto.ToLessonFormModel(dto.Sections);
                 editContext = new(lesson);
             }
             catch (HttpRequestException ex)
@@ -56,7 +56,7 @@ namespace LessonTool.UI.WebApp.Components.Lesson
             if (!editContext.Validate())
                 return;
 
-            LessonDto dto = lesson.ToLessonDto();
+            LessonDto dto = lesson.ToLessonDto(lesson.Sections);
 
             if (lesson.Id == Guid.Empty)
                 await LessonRepository.CreateAsync(dto, cancellationToken);

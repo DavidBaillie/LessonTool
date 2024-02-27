@@ -4,11 +4,13 @@
 @using LessonTool.UI.WebApp.Components.Lesson
 @inherits BaseComponent<LessonEditPage>
 
-<div class="editor-size">
-    <div class="card">
-        <div class="card-body">
-            <div>
-                <LessonEditor LessonId="@lessonId" LessonRepository="@fullLessonRepository" />
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <div class="editor-size">
+        <div class="">
+            <div class="">
+                <div>
+                    <LessonEditor LessonId="@lessonId" LessonRepository="@fullLessonRepository" />
+                </div>
             </div>
         </div>
     </div>
