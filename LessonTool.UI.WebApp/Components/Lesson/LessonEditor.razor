@@ -43,27 +43,29 @@ else
                 <div class="d-flex flex-column">
                     @for (int i = 0; i < lesson.Sections.Count; i++)
                     {
-                        <div class="card @($"{(i > 0 ? "mt-3" : "")}")">
+                        int index = i;
+
+                        <div class="card @($"{(index > 0 ? "mt-3" : "")}")">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-12">
                                         <h5>
-                                            @($"Section {i + 1}")
+                                            @($"Section {index + 1}")
                                         </h5>
                                     </div>
                                     <div class="col-12 form-floating">
-                                        <input id="@($"secTitle-{i}")" type="text" class="form-control"
-                                               @bind-value="@lesson.Sections[i].Title" />
-                                        <label for="@($"secTitle-{i}")" class="form-label">Title</label>
+                                        <input id="@($"secTitle-{index}")" type="text" class="form-control"
+                                               @bind-value="@lesson.Sections[index].Title" />
+                                        <label for="@($"secTitle-{index}")" class="form-label">Title</label>
                                     </div>
 
-                                    @* <div class="col-12 form-floating">
-                                        <textarea class="form-control" placeholder="Content" type="text" id="@($"secContent-{i}")"
+                                    <div class="col-12 form-floating">
+                                        <textarea class="form-control" placeholder="Content" type="text" id="@($"secContent-{index}")"
                                                   style="height: 6rem;"
-                                                  @bind-value="@lesson.Sections[i].Content"
+                                                  @bind-value="@lesson.Sections[index].Content"
                                                   @bind-value:event="oninput" />
-                                        <label for="@($"secContent-{i}")" class="form-label">Content</label>
-                                    </div> *@
+                                        <label for="@($"secContent-{index}")" class="form-label">Content</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
