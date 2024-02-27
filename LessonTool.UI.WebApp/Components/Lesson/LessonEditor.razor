@@ -8,37 +8,65 @@
 }
 else
 {
-    <div>
+    <div class="container-fluid p-0 m-0">
         <EditForm EditContext="@editContext">
             <div class="d-flex flex-column">
-                <div class="d-flex flex-row justify-content-end">
+                
+                <!-- Save Button -->
+                <div class="d-flex flex-row justify-content-between mb-3">
+                    <h2>
+                        Lesson Editor
+                    </h2>
                     <button class="btn btn-primary" onclick="@(async () => await TrySaveFormModelAsync())">
                         @($"{(lesson.Id == Guid.Empty ? "Create Lesson" : "Save Lesson")}")
                     </button>
                 </div>
-
-                <div class="d-flex flex-column">
-                    <div>
-                        <label>Lesson Title</label>
-                        <input />
-                    </div>
-                    <div>
-                        <label>Lesson Description</label>
-                        <textarea />
+                
+                <div class="mb-4">
+                    <div class="">
+                        <div class="row mx-0">
+                            <div class="col-12 form-floating mb-1 px-0">
+                                <input class="form-control" type="text" id="lessonTitle" @bind-value="@lesson.Name" />
+                                <label for="lessonTitle" class="form-label">Title</label>
+                            </div>
+                            <div class="col-12 form-floating px-0">
+                                <textarea class="form-control" placeholder="Description" type="text" id="lessonDescription"
+                                          style="height: 6rem;"
+                                          @bind-value="@lesson.Description" 
+                                          @bind-value:event="oninput" />
+                                <label for="lessonDescription" class="form-label">Description</label>
+                            </div>
+                        </div>    
                     </div>
                 </div>
 
                 <div class="d-flex flex-column">
-                    @foreach (var section in lesson.Sections)
+                    @for (int i = 0; i < lesson.Sections.Count; i++)
                     {
-                        <div>
-                            <div>
-                                <label>Section Title</label>
-                                <input />
-                            </div>
-                            <div>
-                                <label>Section Description</label>
-                                <textarea />
+                        int index = i;
+
+                        <div class="card @($"{(index > 0 ? "mt-3" : "")}")">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h5>
+                                            @($"Section {index + 1}")
+                                        </h5>
+                                    </div>
+                                    <div class="col-12 form-floating">
+                                        <input id="@($"secTitle-{index}")" type="text" class="form-control"
+                                               @bind-value="@lesson.Sections[index].Title" />
+                                        <label for="@($"secTitle-{index}")" class="form-label">Title</label>
+                                    </div>
+
+                                    <div class="col-12 form-floating">
+                                        <textarea class="form-control" placeholder="Content" type="text" id="@($"secContent-{index}")"
+                                                  style="height: 6rem;"
+                                                  @bind-value="@lesson.Sections[index].Content"
+                                                  @bind-value:event="oninput" />
+                                        <label for="@($"secContent-{index}")" class="form-label">Content</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     }

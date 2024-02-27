@@ -1,0 +1,15 @@
+﻿@page "/lesson"
+
+@inherits BaseComponent<LessonViewPage>
+
+@using LessonTool.UI.WebApp.Components.Lesson
+@using LessonTool.UI.WebApp.Components.Section
+
+<div>
+    <div>
+        <LessonHeader Lesson="@lesson" />
+    </div>
+    <div>
+        <SectionList SectionsSource="@(() => Task.FromResult(lesson.Sections))" />
+    </div>
+</div>

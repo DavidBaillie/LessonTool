@@ -1,16 +1,14 @@
 ﻿using LessonTool.Common.Domain.Interfaces;
 using Microsoft.AspNetCore.Components;
 using LessonTool.UI.WebApp.Extensions;
+using LessonTool.UI.Application.Interfaces;
 
 namespace LessonTool.UI.WebApp.Pages
 {
     public partial class LessonEditPage
     {
         [Inject]
-        public ILessonRepository LessonRepository { get; set; }
-
-        [Inject]
-        public ISectionRepository SectionRepository { get; set; }
+        private IFullLessonRepository fullLessonRepository {  get; set; }
 
         private Guid lessonId = Guid.Empty;
 
