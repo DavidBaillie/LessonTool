@@ -1,3 +1,4 @@
+using LessonTool.API.Endpoint.Controllers;
 using LessonTool.API.Endpoint.Middleware;
 using LessonTool.API.Infrastructure.Factories;
 using LessonTool.API.Infrastructure.Interfaces;
