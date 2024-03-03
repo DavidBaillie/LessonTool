@@ -1,6 +1,13 @@
-﻿namespace Lessontool.API.Authentication.Services;
+﻿using Lessontool.API.Authentication.Models;
+using LessonTool.Common.Domain.Interfaces;
+using System.Security.Claims;
 
-public class UserClaimsGenerator
+namespace Lessontool.API.Authentication.Services;
+
+public class UserClaimsGenerator(IRepository<AuthenticatedUser> userRepository)
 {
-
+    public List<Claim> GenerateUserClaims(string username)
+    {
+        return default;
+    }
 }

@@ -1,11 +1,11 @@
-﻿using LessonTool.API.Infrastructure.Models;
+﻿using Lessontool.API.Authentication.Models;
 using LessonTool.Common.Domain.Interfaces;
 
 namespace LessonTool.API.Infrastructure.Repositories;
 
-public sealed class CosmosUserRepository : CosmosRepositoryBase, IRepository<CosmosUser>
+public sealed class CosmosUserRepository : CosmosRepositoryBase, IRepository<AuthenticatedUser>
 {
-    public Task<CosmosUser> CreateAsync(CosmosUser entity, CancellationToken cancellationToken = default)
+    public Task<AuthenticatedUser> CreateAsync(AuthenticatedUser entity, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
@@ -15,12 +15,12 @@ public sealed class CosmosUserRepository : CosmosRepositoryBase, IRepository<Cos
         throw new NotImplementedException();
     }
 
-    public Task<CosmosUser> GetAsync(Guid id, CancellationToken cancellationToken = default)
+    public Task<AuthenticatedUser> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task<CosmosUser> UpdateAsync(CosmosUser entity, CancellationToken cancellationToken = default)
+    public Task<AuthenticatedUser> UpdateAsync(AuthenticatedUser entity, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
