@@ -5,7 +5,10 @@ using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.API.Infrastructure.Options;
 using LessonTool.API.Infrastructure.Repositories;
 using LessonTool.Common.Domain.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace LessonTool.API.Endpoint;
 
@@ -14,6 +17,29 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services
+            .AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new()
+                {
+                    ValidIssuer = builder.Configuration.GetSection("JwtOptions")["Issuer"],
+                    ValidAudience = builder.Configuration.GetSection("JwtOptions")["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JwtOptions")["Key"])),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true
+                };
+            });
+
+        builder.Services.AddAuthorization();
 
         builder.Services.Configure<CosmosClientOption>(
             builder.Configuration.GetSection("CosmosOptions"));
@@ -55,11 +81,13 @@ public class Program
 
         app.UseCors("CORS_Policy");
         app.UseHttpsRedirection();
-        app.UseAuthorization();
 
         //TODO - Enable this later when everything is working
         //app.UseMiddleware<InternalServerErrorMiddleware>();
         //app.UseMiddleware<DataAccessErrorMiddleware>();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.MapControllers();
 
