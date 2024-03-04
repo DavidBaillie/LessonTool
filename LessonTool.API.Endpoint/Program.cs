@@ -47,16 +47,11 @@ public class Program
             builder.Configuration.GetSection("CosmosOptions"));
 
         // Add services to the container.
-        builder.Services.AddScoped<ILessonRepository, EFCosmosLessonRepository>();
-        builder.Services.AddScoped<ISectionRepository, CosmosSectionRepository>();
-        builder.Services.AddScoped<ICosmosContainerFactory, CosmosContainerFactory>();
-
         builder.Services.AddDbContext<CosmosDbContext>();
+        builder.Services.AddScoped<ILessonRepository, EFCosmosLessonRepository>();
+        builder.Services.AddScoped<ISectionRepository, EfCosmosSectionRepository>();
 
-        builder.Services.AddControllers(options =>
-        {
-            options.SuppressAsyncSuffixInActionNames = false;
-        });
+        builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();

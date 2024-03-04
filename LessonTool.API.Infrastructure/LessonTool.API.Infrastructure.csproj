@@ -17,8 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lessontool.API.Authentication\Lessontool.API.Authentication.csproj" />
-    <ProjectReference Include="..\LessonTool.Common.Application\LessonTool.Common.Application.csproj" />
     <ProjectReference Include="..\LessonTool.Common.Domain\LessonTool.Common.Domain.csproj" />
   </ItemGroup>
 

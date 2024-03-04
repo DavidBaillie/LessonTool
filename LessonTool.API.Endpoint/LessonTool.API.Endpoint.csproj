@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lessontool.API.Authentication\Lessontool.API.Authentication.csproj" />
     <ProjectReference Include="..\LessonTool.API.Infrastructure\LessonTool.API.Infrastructure.csproj" />
     <ProjectReference Include="..\LessonTool.Common.Domain\LessonTool.Common.Domain.csproj" />
   </ItemGroup>
