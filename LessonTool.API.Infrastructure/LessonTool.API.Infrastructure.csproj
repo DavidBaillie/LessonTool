@@ -8,6 +8,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.Identity.EntityFramework" Version="2.2.4" />
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.38.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="8.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

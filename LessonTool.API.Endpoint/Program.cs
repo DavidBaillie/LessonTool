@@ -1,11 +1,13 @@
 using LessonTool.API.Endpoint.Controllers;
 using LessonTool.API.Endpoint.Middleware;
+using LessonTool.API.Infrastructure.EntityFramework;
 using LessonTool.API.Infrastructure.Factories;
 using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.API.Infrastructure.Options;
 using LessonTool.API.Infrastructure.Repositories;
 using LessonTool.Common.Domain.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -45,9 +47,11 @@ public class Program
             builder.Configuration.GetSection("CosmosOptions"));
 
         // Add services to the container.
-        builder.Services.AddScoped<ILessonRepository, CosmosLessonRepository>();
+        builder.Services.AddScoped<ILessonRepository, EFCosmosLessonRepository>();
         builder.Services.AddScoped<ISectionRepository, CosmosSectionRepository>();
         builder.Services.AddScoped<ICosmosContainerFactory, CosmosContainerFactory>();
+
+        builder.Services.AddDbContext<CosmosDbContext>();
 
         builder.Services.AddControllers(options =>
         {
