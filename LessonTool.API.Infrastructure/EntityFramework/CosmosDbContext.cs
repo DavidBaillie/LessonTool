@@ -1,5 +1,6 @@
 ﻿using LessonTool.API.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
@@ -12,10 +13,18 @@ public class CosmosDbContext(IConfiguration configuration) : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseCosmos(
-            configuration.GetSection("CosmosOptions")["Endpoint"],
-            configuration.GetSection("CosmosOptions")["AccountKey"],
-            configuration.GetSection("CosmosOptions")["DatabaseName"]);
+        if (configuration["UseInMemory"] == "true")
+        {
+            optionsBuilder.UseInMemoryDatabase("LessonToolDatabase")
+                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+        }
+        else
+        {
+            optionsBuilder.UseCosmos(
+                configuration.GetSection("CosmosOptions")["Endpoint"],
+                configuration.GetSection("CosmosOptions")["AccountKey"],
+                configuration.GetSection("CosmosOptions")["DatabaseName"]);
+        }
 
         base.OnConfiguring(optionsBuilder);
     }
