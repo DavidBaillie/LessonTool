@@ -13,6 +13,7 @@ public class EFCosmosLessonRepository(CosmosDbContext _context) : ILessonReposit
     public async Task<LessonDto> CreateAsync(LessonDto entity, CancellationToken cancellationToken = default)
     {
         var cosmosEntity = entity.ToCosmosLesson();
+        cosmosEntity.Id = Guid.NewGuid().ToString();
 
         var dbEntry = await _context.Lessons.AddAsync(cosmosEntity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
@@ -36,7 +37,7 @@ public class EFCosmosLessonRepository(CosmosDbContext _context) : ILessonReposit
         var minVisibleDate = min ?? DateTime.MinValue;
         var maxVisibleDate = max ?? DateTime.MaxValue;  
 
-        var cosmosLessons = await _context.Lessons.WithPartitionKey(CosmosConstants.LessonTypeName)
+        var cosmosLessons = await _context.Lessons
             .Where(x => x.VisibleDate > minVisibleDate && x.VisibleDate < maxVisibleDate)
             .ToListAsync(cancellationToken);
 
@@ -53,6 +54,9 @@ public class EFCosmosLessonRepository(CosmosDbContext _context) : ILessonReposit
 
     public async Task<LessonDto> UpdateAsync(LessonDto entity, CancellationToken cancellationToken = default)
     {
+        if (entity.Id == Guid.Empty)
+            throw new DataAccessException($"Cannot update an entity when no Id was provided!");
+
         var lesson = entity.ToCosmosLesson();
 
         var entry = _context.Lessons.Update(lesson);

@@ -18,7 +18,7 @@ public class SectionController : ApiControllerBase<SectionDto>
     }
 
 
-    [HttpGet("api/lessons/{id}/sections")]
+    [HttpGet("/api/lessons/{id}/sections")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<SectionDto>>> GetByLessonAsync(Guid id, CancellationToken cancellationToken = default)
     {

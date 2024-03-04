@@ -1,8 +1,9 @@
 ﻿using LessonTool.API.Infrastructure.EntityFramework;
 using LessonTool.API.Infrastructure.Extensions;
+using LessonTool.Common.Domain.Exceptions;
 using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Models;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace LessonTool.API.Infrastructure.Repositories;
 
@@ -10,10 +11,13 @@ public class EfCosmosSectionRepository(CosmosDbContext _context) : ISectionRepos
 {
     public async Task<SectionDto> CreateAsync(SectionDto entity, CancellationToken cancellationToken = default)
     {
-        var cosmosEntry = await _context.Sections.AddAsync(entity.ToCosmosSection(), cancellationToken);   
+        var section = entity.ToCosmosSection();
+        section.Id = Guid.NewGuid().ToString();
+
+        var entry = await _context.Sections.AddAsync(section, cancellationToken);   
         await _context.SaveChangesAsync(cancellationToken);
 
-        return cosmosEntry.Entity.ToSectionDto();
+        return entry.Entity.ToSectionDto();
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
@@ -35,12 +39,18 @@ public class EfCosmosSectionRepository(CosmosDbContext _context) : ISectionRepos
 
     public async Task<List<SectionDto>> GetSectionsByLessonAsync(Guid lessonId, CancellationToken cancellationToken = default)
     {
-        var sections = await _context.Sections.Where(x => x.LessonId == lessonId.ToString()).ToListAsync(cancellationToken);
+        var lessonIdString = lessonId.ToString();
+        var sections = await _context.Sections
+            .Where(x => x.LessonId == lessonIdString)
+            .ToListAsync(cancellationToken);
         return sections.Select(x => x.ToSectionDto()).ToList();
     }
 
     public async Task<SectionDto> UpdateAsync(SectionDto entity, CancellationToken cancellationToken = default)
     {
+        if (entity.Id == Guid.Empty)
+            throw new DataAccessException($"Cannot update a section when no Id provided!");
+
         var entry = _context.Sections.Update(entity.ToCosmosSection());
         await _context.SaveChangesAsync(cancellationToken);
 
