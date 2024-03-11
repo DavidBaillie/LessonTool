@@ -1,33 +1,15 @@
 ﻿using LessonTool.API.Infrastructure.Models;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 
 namespace LessonTool.API.Infrastructure.EntityFramework;
 
-public class CosmosDbContext(IConfiguration configuration) : DbContext
+public class CosmosDbContext : DbContext, IDataProtectionKeyContext
 {
     public DbSet<CosmosLesson> Lessons { get; set; }
     public DbSet<CosmosSection> Sections { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (configuration["UseInMemory"] == "true")
-        {
-            optionsBuilder.UseInMemoryDatabase("LessonToolDatabase")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning));
-        }
-        else
-        {
-            optionsBuilder.UseCosmos(
-                configuration.GetSection("CosmosOptions")["Endpoint"],
-                configuration.GetSection("CosmosOptions")["AccountKey"],
-                configuration.GetSection("CosmosOptions")["DatabaseName"]);
-        }
-
-        base.OnConfiguring(optionsBuilder);
-    }
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
