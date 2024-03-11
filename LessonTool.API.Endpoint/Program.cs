@@ -20,7 +20,7 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        builder.Services.AddCors();
+        builder.Services.AddCustomCorsPolicy();
 
         var app = builder.Build();
         app.MapIdentityApi<CosmosIdentityUser>();

@@ -51,7 +51,7 @@ public static class StartupExtensions
         services.AddAuthorization();
     }
 
-    public static void AddCorsPolicy(this IServiceCollection services)
+    public static void AddCustomCorsPolicy(this IServiceCollection services)
     {
         services.AddCors(policy => {
 
