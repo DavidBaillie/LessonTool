@@ -11,6 +11,8 @@ public class CosmosDbContext : DbContext, IDataProtectionKeyContext
 
     public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
+    public CosmosDbContext(DbContextOptions<CosmosDbContext> options) : base(options) { }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<CosmosLesson>()

@@ -1,5 +1,9 @@
+using LessonTool.API.Infrastructure.EntityFramework;
 using LessonTool.API.Infrastructure.Models;
 using LessonTool.API.Infrastructure.Options;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using System.Configuration;
 
 namespace LessonTool.API.Endpoint;
 
@@ -23,7 +27,6 @@ public class Program
         builder.Services.AddCustomCorsPolicy();
 
         var app = builder.Build();
-        app.MapIdentityApi<CosmosIdentityUser>();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
