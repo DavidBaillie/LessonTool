@@ -34,6 +34,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessonTool.API.Infrastructu
 		{29E2B9CC-9A1E-4462-BF73-98C253003E5B} = {29E2B9CC-9A1E-4462-BF73-98C253003E5B}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LessonTool.API.Authentication", "LessonTool.API.Authentication\LessonTool.API.Authentication.csproj", "{10A638D5-009C-45E3-8504-A3532EF15ADF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LessonTool.API.Domain", "LessonTool.API.Domain\LessonTool.API.Domain.csproj", "{60CE3E8A-C02F-417C-833B-D31BF3A7A75D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +68,14 @@ Global
 		{70517EAC-8140-4A08-94BF-EAAEA06EAEA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70517EAC-8140-4A08-94BF-EAAEA06EAEA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70517EAC-8140-4A08-94BF-EAAEA06EAEA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10A638D5-009C-45E3-8504-A3532EF15ADF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10A638D5-009C-45E3-8504-A3532EF15ADF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10A638D5-009C-45E3-8504-A3532EF15ADF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10A638D5-009C-45E3-8504-A3532EF15ADF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60CE3E8A-C02F-417C-833B-D31BF3A7A75D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60CE3E8A-C02F-417C-833B-D31BF3A7A75D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60CE3E8A-C02F-417C-833B-D31BF3A7A75D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60CE3E8A-C02F-417C-833B-D31BF3A7A75D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
