@@ -5,5 +5,6 @@ namespace LessonTool.API.Domain.Interfaces;
 
 public interface ILoginSessionRepository : IRepository<UserLoginSession>
 {
-    Task DeleteExpiredSessions();
+    Task<UserLoginSession> GetSessionByUserIdAsync(string userId, CancellationToken cancellationToken = default);
+    Task DeleteExpiredSessionsAsync();
 }

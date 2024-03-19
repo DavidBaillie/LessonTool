@@ -31,13 +31,14 @@ public class EFCosmosLoginSessionRepository(CosmosDbContext _context) : ILoginSe
         }
     }
 
-    public Task DeleteExpiredSessions()
+    public Task DeleteExpiredSessionsAsync()
     {
         throw new NotImplementedException();
     }
 
     public async Task<UserLoginSession> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
+        await DeleteExpiredSessionsAsync();
         var session = await _context.LoginSessions.FirstOrDefaultAsync(x => x.Id == id.ToString(), cancellationToken);
         return session.ToLoginSession();
     }
@@ -51,5 +52,10 @@ public class EFCosmosLoginSessionRepository(CosmosDbContext _context) : ILoginSe
         await _context.SaveChangesAsync(cancellationToken);
 
         return entry.Entity.ToLoginSession();
+    }
+
+    public async Task<UserLoginSession> GetSessionByUserIdAsync(string userId, CancellationToken cancellationToken = default)
+    {
+        await DeleteExpiredSessionsAsync();
     }
 }

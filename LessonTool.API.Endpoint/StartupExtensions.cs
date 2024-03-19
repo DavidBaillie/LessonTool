@@ -44,10 +44,7 @@ public static class StartupExtensions
 
     public static void AddAuthenticationAndAuthorization(this IServiceCollection services)
     {
-        services.AddDataProtection()
-            .PersistKeysToDbContext<CosmosDbContext>();
-
-        services.AddAuthentication().AddBearerToken();
+        //services.AddAuthentication();
         services.AddAuthorization();
     }
 

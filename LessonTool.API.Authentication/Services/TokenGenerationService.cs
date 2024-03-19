@@ -38,6 +38,11 @@ public class TokenGenerationService(IConfiguration _configuration) : ITokenGener
             signingCredentials: credentials);
     }
 
+    public string WriteSecurityToken(JwtSecurityToken token)
+    {
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
     public string CreateRefreshToken()
     {
         using var generator = RandomNumberGenerator.Create();
