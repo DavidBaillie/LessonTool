@@ -4,6 +4,6 @@
     {
         byte[] CreateSalt();
         string HashString(string content);
-        string HashStringAndSalt(string password, byte[] salt);
+        string HashStringWithSalt(string password, byte[] salt);
     }
 }

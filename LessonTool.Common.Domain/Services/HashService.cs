@@ -25,7 +25,7 @@ public class HashService : IHashService
     /// <param name="content">Content to hash</param>
     /// <param name="salt">Generated salt to hash with</param>
     /// <returns></returns>
-    public string HashStringAndSalt(string content, byte[] salt)
+    public string HashStringWithSalt(string content, byte[] salt)
     {
         var hash = Rfc2898DeriveBytes.Pbkdf2(Encoding.UTF8.GetBytes(content), salt, iterations, algorithm, keySize);
         return Convert.ToHexString(hash);

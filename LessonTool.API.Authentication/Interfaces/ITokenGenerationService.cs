@@ -13,5 +13,6 @@ namespace LessonTool.API.Authentication.Interfaces
         string WriteSecurityToken(JwtSecurityToken token);
         List<Claim> CreateUserClaims(UserAccount user);
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+        List<Claim> CreateAnonymousClaims();
     }
 }

@@ -28,6 +28,15 @@ public class TokenGenerationService(IConfiguration _configuration) : ITokenGener
         };
     }
 
+    public List<Claim> CreateAnonymousClaims()
+    {
+        return new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, "Anonymous"),
+            new Claim(ClaimTypes.Role, "Read")
+        };
+    }
+
     public JwtSecurityToken CreateJwtSecurityToken(SigningCredentials credentials, List<Claim> claims, int expiresAfterMinutes)
     {
         return new JwtSecurityToken(
