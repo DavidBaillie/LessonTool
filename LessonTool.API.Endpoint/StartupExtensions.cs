@@ -1,6 +1,11 @@
-﻿using LessonTool.API.Infrastructure.EntityFramework;
+﻿using LessonTool.API.Authentication.Interfaces;
+using LessonTool.API.Authentication.Services;
+using LessonTool.API.Domain.Interfaces;
+using LessonTool.API.Infrastructure.EntityFramework;
+using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.API.Infrastructure.Repositories;
 using LessonTool.Common.Domain.Interfaces;
+using LessonTool.Common.Domain.Services;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -39,6 +44,11 @@ public static class StartupExtensions
     {
         services.AddScoped<ILessonRepository, EFCosmosLessonRepository>();
         services.AddScoped<ISectionRepository, EfCosmosSectionRepository>();
+        services.AddScoped<IUserAccountRepository, EFCosmosUserAccountRepository>();
+        services.AddScoped<ILoginSessionRepository, EFCosmosLoginSessionRepository>();
+        
+        services.AddTransient<IHashService, HashService>();
+        services.AddTransient<ITokenGenerationService, TokenGenerationService>();
     }
 
 

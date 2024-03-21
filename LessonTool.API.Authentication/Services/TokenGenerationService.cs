@@ -13,7 +13,7 @@ public class TokenGenerationService(IConfiguration _configuration) : ITokenGener
 {
     public SigningCredentials CreateSigningCredentials()
     {
-        var key = Encoding.UTF8.GetBytes(_configuration.GetSection("jwt")["key"]);
+        var key = Encoding.UTF8.GetBytes(_configuration.GetSection("JwtOptions")["Key"]);
         return new SigningCredentials(
             new SymmetricSecurityKey(key),
             SecurityAlgorithms.HmacSha256);
@@ -23,8 +23,8 @@ public class TokenGenerationService(IConfiguration _configuration) : ITokenGener
     {
         return new List<Claim>
         {
-            new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Role, user.AccountType)
+            new Claim(ClaimTypes.Name, user.Username ?? throw new ArgumentException("Cannot create claims for user, no Username")),
+            new Claim(ClaimTypes.Role, user.AccountType ?? throw new ArgumentException("Cannot create claims for user, no Account Type"))
         };
     }
 
@@ -40,8 +40,8 @@ public class TokenGenerationService(IConfiguration _configuration) : ITokenGener
     public JwtSecurityToken CreateJwtSecurityToken(SigningCredentials credentials, List<Claim> claims, int expiresAfterMinutes)
     {
         return new JwtSecurityToken(
-            issuer: _configuration.GetSection("jwt")["issuer"],
-            audience: _configuration.GetSection("jwt")["audience"],
+            issuer: _configuration.GetSection("JwtOptions")["Issuer"],
+            audience: _configuration.GetSection("JwtOptions")["Audience"],
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(expiresAfterMinutes),
             signingCredentials: credentials);
@@ -63,7 +63,7 @@ public class TokenGenerationService(IConfiguration _configuration) : ITokenGener
 
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
-        var key = Encoding.UTF8.GetBytes(_configuration.GetSection("jwt")["key"]);
+        var key = Encoding.UTF8.GetBytes(_configuration.GetSection("JwtOptions")["Key"]);
 
         var tokenParams = new TokenValidationParameters
         {
@@ -72,8 +72,8 @@ public class TokenGenerationService(IConfiguration _configuration) : ITokenGener
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(key),
             ValidateLifetime = false,
-            ValidIssuer = _configuration.GetSection("jwt")["issuer"],
-            ValidAudience = _configuration.GetSection("jwt")["audience"],
+            ValidIssuer = _configuration.GetSection("JwtOptions")["Issuer"],
+            ValidAudience = _configuration.GetSection("JwtOptions")["Audience"],
         };
 
         var principal = new JwtSecurityTokenHandler()

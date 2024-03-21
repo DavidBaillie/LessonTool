@@ -1,4 +1,5 @@
-﻿using LessonTool.API.Authentication.Interfaces;
+﻿using Azure.Core;
+using LessonTool.API.Authentication.Interfaces;
 using LessonTool.API.Authentication.Models;
 using LessonTool.API.Domain.Interfaces;
 using LessonTool.API.Infrastructure.Interfaces;
@@ -34,7 +35,22 @@ namespace LessonTool.API.Endpoint.Controllers
                     return await GenerateAnonymousTokens(cancellationToken);
                 //Actual account for read/write
                 else
-                    return await GenerateAccountTokens(loginRequest, cancellationToken);
+                {
+                    //Check to see if we have a user
+                    var user = await _userAccounts.GetAccountByUsernameAsync(loginRequest.Username, cancellationToken);
+                    if (user == null)
+                        return Unauthorized();
+
+                    //User needs to reset password
+                    if (string.IsNullOrWhiteSpace(user.Password))
+                        return Conflict();
+
+                    return await GenerateAccountTokens(user, loginRequest, cancellationToken);
+                }
+            }
+            catch (AuthenticationFailureException authEx)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -52,6 +68,28 @@ namespace LessonTool.API.Endpoint.Controllers
         public async Task<ActionResult> ResetPassword()
         {
             return default;
+        }
+
+        [HttpPost("test")]
+        public async Task<ActionResult<string>> CreateFakeUser()
+        {
+            byte[] salt = _hashService.CreateSalt();
+            string encodedSalt = Convert.ToBase64String(salt);
+            string password = _hashService.HashString("password");
+            string hashedPassword = _hashService.HashStringWithSalt(password, salt);
+
+            var user = new UserAccount()
+            {
+                AccountType = "Admin",
+                Username = "test",
+                Password = hashedPassword,
+                PasswordSalt = encodedSalt,
+                PasswordResetToken = ""
+            };
+
+            await _userAccounts.CreateAsync(user);
+
+            return Ok($"{password} // {encodedSalt}");
         }
 
         /// <summary>
@@ -92,15 +130,12 @@ namespace LessonTool.API.Endpoint.Controllers
         /// <param name="cancellationToken">Process token</param>
         /// <returns></returns>
         /// <exception cref="AuthenticationFailureException"></exception>
-        private async Task<AccessTokensModel> GenerateAccountTokens(LoginRequestModel request, CancellationToken cancellationToken)
+        private async Task<AccessTokensModel> GenerateAccountTokens(UserAccount user, LoginRequestModel request, CancellationToken cancellationToken)
         {
-            //Check to see if we have a user
-            var user = await _userAccounts.GetAccountByUsernameAsync(request.Username, cancellationToken);
-            if (user == null)
-                throw new AuthenticationFailureException("User does not exist, cannot generate token!");
-
             //Check that the password matches the salted version
-            var hashedPassword = _hashService.HashStringWithSalt(request.HashedPassword, Encoding.UTF8.GetBytes(user.PasswordSalt));
+            var recoded = Convert.ToBase64String(Convert.FromBase64String(user.PasswordSalt));
+
+            var hashedPassword = _hashService.HashStringWithSalt(request.HashedPassword, Convert.FromBase64String(user.PasswordSalt));
             if (hashedPassword != user.Password)
                 throw new AuthenticationFailureException("Password mismatch, login failed");
 
@@ -113,14 +148,14 @@ namespace LessonTool.API.Endpoint.Controllers
                     _tokenGenerator.CreateUserClaims(user), 120));
 
             //Save the session to the db
-            await _loginSessions.CreateAsync(
-                new UserLoginSession()
-                {
-                    AccessToken = accessToken,
-                    RefreshToken = refreshToken,
-                    ExpiresDateTime = expires,
-                    UserAccountId = user.Id,
-                }, cancellationToken);
+            var session = new UserLoginSession()
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                ExpiresDateTime = expires,
+                UserAccountId = user.Id,
+            };
+            await _loginSessions.CreateAsync(session, cancellationToken);
 
             return new AccessTokensModel()
             {
