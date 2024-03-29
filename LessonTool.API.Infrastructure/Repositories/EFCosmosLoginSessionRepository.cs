@@ -54,7 +54,7 @@ public class EFCosmosLoginSessionRepository(CosmosDbContext _context) : ILoginSe
         return entry.Entity.ToLoginSession();
     }
 
-    public async Task<UserLoginSession> GetSessionByUserIdAsync(string userId, CancellationToken cancellationToken = default)
+    public async Task<UserLoginSession> GetSessionByUserIdAsync(string userId, string refreshToken, CancellationToken cancellationToken = default)
     {
         await DeleteExpiredSessionsAsync();
         return default;
