@@ -72,6 +72,8 @@ namespace LessonTool.API.Endpoint.Controllers
                 var principle = _tokenGenerator.GetPrincipalFromExpiredToken(tokens.Token);
                 var username = principle.Identity.Name;
 
+                await _loginSessions.DeleteExpiredSessionsAsync(cancellationToken);
+
                 //Process the token for a new session
                 if (username == "Anonymous")
                     return await ProcessAnonymousRefreshRequest(tokens, cancellationToken);
@@ -82,7 +84,7 @@ namespace LessonTool.API.Endpoint.Controllers
             {
                 return StatusCode(425);
             }
-            catch
+            catch (Exception e)
             {
                 return Unauthorized();
             }

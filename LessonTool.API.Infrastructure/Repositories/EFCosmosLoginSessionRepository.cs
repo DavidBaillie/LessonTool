@@ -31,24 +31,34 @@ public class EFCosmosLoginSessionRepository(CosmosDbContext _context) : ILoginSe
         }
     }
 
-    public Task DeleteExpiredSessionsAsync()
+    public async Task DeleteExpiredSessionsAsync(CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var expired = await _context.LoginSessions
+            .Where(x => x.ExpiresDateTime < DateTime.UtcNow)
+            .ToListAsync(cancellationToken);
+
+        _context.LoginSessions.RemoveRange(expired);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<UserLoginSession> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        await DeleteExpiredSessionsAsync();
-        var session = await _context.LoginSessions.FirstOrDefaultAsync(x => x.Id == id.ToString(), cancellationToken);
+        var session = await _context.LoginSessions.FirstAsync(x => x.Id == id.ToString(), cancellationToken);
         return session.ToLoginSession();
     }
 
     public async Task<UserLoginSession> UpdateAsync(UserLoginSession entity, CancellationToken cancellationToken = default)
     {
         if (entity.Id == Guid.Empty)
-            throw new DataAccessException($"Cannot update a sessions when no Id provided!");
+            throw new ArgumentException($"Cannot update a sessions when no Id provided!");
 
-        var entry = _context.LoginSessions.Update(entity.ToCosmosLoginSession());
+        var exisiting = await _context.LoginSessions.FirstAsync(x => x.Id == entity.Id.ToString(), cancellationToken);
+        
+        exisiting.RefreshToken = entity.RefreshToken;
+        exisiting.ExpiresDateTime = entity.ExpiresDateTime;
+        exisiting.AccessToken = entity.AccessToken;
+
+        var entry = _context.LoginSessions.Update(exisiting);
         await _context.SaveChangesAsync(cancellationToken);
 
         return entry.Entity.ToLoginSession();
@@ -56,7 +66,11 @@ public class EFCosmosLoginSessionRepository(CosmosDbContext _context) : ILoginSe
 
     public async Task<UserLoginSession> GetSessionByUserIdAsync(string userId, string refreshToken, CancellationToken cancellationToken = default)
     {
-        await DeleteExpiredSessionsAsync();
-        return default;
+        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(refreshToken))
+            throw new ArgumentException($"Cannot get a user login session when the userID and token are not provided!");
+
+        var entity = await _context.LoginSessions
+            .FirstAsync(x => x.UserAccountId == userId && x.RefreshToken == refreshToken, cancellationToken);
+        return entity.ToLoginSession();
     }
 }
