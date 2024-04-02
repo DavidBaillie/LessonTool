@@ -1,6 +1,6 @@
-﻿namespace LessonTool.Common.Domain.Models;
+﻿namespace LessonTool.Common.Domain.Models.Authentication;
 
-public class LoginRequestModel
+public sealed class LoginRequestModel
 {
     public string Username { get; set; }
     public string HashedPassword { get; set; }

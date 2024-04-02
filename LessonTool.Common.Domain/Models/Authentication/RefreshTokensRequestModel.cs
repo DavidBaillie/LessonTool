@@ -1,6 +1,6 @@
-﻿namespace LessonTool.Common.Domain.Models;
+﻿namespace LessonTool.Common.Domain.Models.Authentication;
 
-public class RefreshTokensRequestModel
+public sealed class RefreshTokensRequestModel
 {
     public string Token { get; set; }
     public string RefreshToken { get; set; }

@@ -1,40 +1,33 @@
 ﻿using LessonTool.API.Authentication.Exceptions;
 using LessonTool.API.Authentication.Interfaces;
-using LessonTool.API.Authentication.Models;
 using LessonTool.API.Domain.Interfaces;
 using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.Common.Domain.Constants;
 using LessonTool.Common.Domain.Interfaces;
-using LessonTool.Common.Domain.Models;
+using LessonTool.Common.Domain.Models.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Cosmos;
-using Newtonsoft.Json.Linq;
-using System.Threading;
 
 namespace LessonTool.API.Endpoint.Controllers
 {
     [ApiController]
     [Route("/api/account/")]
-    public class AuthenticationController(IUserAccountRepository _userAccounts, ILoginSessionRepository _loginSessions, ITokenGenerationService _tokenGenerator,
-        IHashService _hashService) 
-        : ControllerBase
+    public class AuthenticationController(IUserAccountRepository _userAccounts, ILoginRequestProcessor _loginRequestProcessor, ITokenGenerationService _tokenGenerator,
+        ILoginSessionRepository _loginSessions, IPasswordComplexityValidator _complexityValidator, IHashService _hashService) : ControllerBase
     {
-        private const int TokenExpiresMinutes = 120;
-        private const int TokenExpiresMinutesThreshold = -5;
-
         [HttpPost("login")]
         public async Task<ActionResult<AccessTokensResponseModel>> AuthenticateAsync([FromBody] LoginRequestModel loginRequest, CancellationToken cancellationToken)
         {
             try
             {
                 //Quick safety check to filter out bots scanning endpoints
-                if (loginRequest.RequestToken != TokenConstants.AuthenticationRequestToken || string.IsNullOrWhiteSpace(loginRequest.Username) || string.IsNullOrWhiteSpace(loginRequest.HashedPassword))
+                if (loginRequest.RequestToken != TokenConstants.AuthenticationRequestToken || 
+                    string.IsNullOrWhiteSpace(loginRequest.Username) || string.IsNullOrWhiteSpace(loginRequest.HashedPassword))
                     return Unauthorized();
 
                 //Anonymous account for readonly
                 if (loginRequest.Username == TokenConstants.AnonymousAccountToken.ToString() && loginRequest.HashedPassword == TokenConstants.AnonymousAccountToken.ToString())
-                    return await ProcessAnonymousLoginRequest(cancellationToken);
+                    return await _loginRequestProcessor.ProcessAnonymousLoginRequest(cancellationToken);
                 //Actual account for read/write
                 else
                 {
@@ -47,7 +40,7 @@ namespace LessonTool.API.Endpoint.Controllers
                     if (string.IsNullOrWhiteSpace(user.Password))
                         return Conflict();
 
-                    return await ProcessUserAccountLoginRequest(user, loginRequest, cancellationToken);
+                    return await _loginRequestProcessor.ProcessUserAccountLoginRequest(user, loginRequest, cancellationToken);
                 }
             }
             catch (AuthenticationFailureException authEx)
@@ -76,9 +69,14 @@ namespace LessonTool.API.Endpoint.Controllers
 
                 //Process the token for a new session
                 if (username == "Anonymous")
-                    return await ProcessAnonymousRefreshRequest(tokens, cancellationToken);
+                {
+                    return await _loginRequestProcessor.ProcessAnonymousRefreshRequest(tokens, cancellationToken);
+                }
                 else
-                    return await ProcessUserAccountRefreshRequest(username, tokens, cancellationToken);
+                {
+                    var user = await _userAccounts.GetAccountByUsernameAsync(username, cancellationToken);
+                    return await _loginRequestProcessor.ProcessUserAccountRefreshRequest(user, tokens, cancellationToken);
+                }
             }
             catch (NotExpiredException)
             {
@@ -91,180 +89,40 @@ namespace LessonTool.API.Endpoint.Controllers
         }
 
         [HttpPost("reset")]
-        public async Task<ActionResult> ResetPassword()
+        public async Task<ActionResult> ResetPassword([FromBody]PasswordResetRequestModel request, CancellationToken cancellationToken)
         {
-            return default;
-        }
-
-        [HttpPost("test")]
-        public async Task<ActionResult<string>> CreateFakeUser()
-        {
-            byte[] salt = _hashService.CreateSalt();
-            string encodedSalt = Convert.ToBase64String(salt);
-            string password = _hashService.HashString("password");
-            string hashedPassword = _hashService.HashStringWithSalt(password, salt);
-
-            var user = new UserAccount()
+            try
             {
-                AccountType = "Admin",
-                Username = "test",
-                Password = hashedPassword,
-                PasswordSalt = encodedSalt,
-                PasswordResetToken = ""
-            };
 
-            await _userAccounts.CreateAsync(user);
+                if (request.RequestToken != TokenConstants.AuthenticationRequestToken)
+                    return Unauthorized();
 
-            return Ok($"{password} // {encodedSalt}");
-        }
+                //Check user exists and can reset password
+                var user = await _userAccounts.GetAccountByUsernameAsync(request.Username, cancellationToken);
+                if (user is null || !string.IsNullOrWhiteSpace(user.Password))
+                    return Unauthorized();
 
-        /// <summary>
-        /// Generates a token set for the anonymous user to read only with limit access
-        /// </summary>
-        private async Task<AccessTokensResponseModel> ProcessAnonymousLoginRequest(CancellationToken cancellationToken)
-        {
-            //Create tokens
-            var tokens = CreateAnonymousAccessTokens(TokenExpiresMinutes);
+                //Invalid reset token
+                if (string.IsNullOrWhiteSpace(user.PasswordResetToken) || user.PasswordResetToken != request.ResetToken)
+                    return Unauthorized();
 
-            //Save the session to the db
-            await _loginSessions.CreateAsync(
-                new UserLoginSession()
-                {
-                    AccessToken = tokens.AccessToken,
-                    RefreshToken = tokens.RefreshToken,
-                    ExpiresDateTime = tokens.Expires,
-                    UserAccountId = Guid.Empty,
-                }, cancellationToken);
+                //Make sure password is good
+                if (!_complexityValidator.PasswordIsSufficient(request.Password))
+                    return BadRequest("Password complexity insufficient!");
 
-            return tokens;
-        }
+                var salt = _hashService.CreateSalt();
+                var hashedPassword = _hashService.HashString(request.Password);
 
-        /// <summary>
-        /// Handles taking an expired access token and a refresh token to create a new pair if the state data is correct
-        /// </summary>
-        /// <param name="model">Refresh tokens model</param>
-        /// <param name="cancellationToken">Process token</param>
-        /// <returns></returns>
-        /// <exception cref="AuthenticationFailureException"></exception>
-        /// <exception cref="NotExpiredException"></exception>
-        private async Task<AccessTokensResponseModel> ProcessAnonymousRefreshRequest(RefreshTokensRequestModel model, CancellationToken cancellationToken)
-        {
-            //Grab session for anonymous user
-            var loginSession = (await _loginSessions.GetSessionByUserIdAsync(Guid.Empty.ToString(), model.RefreshToken, cancellationToken))
-                ?? throw new AuthenticationFailureException("No login sessions for that user");
+                user.PasswordResetToken = "";
+                user.PasswordSalt = Convert.ToBase64String(salt);
+                user.Password = _hashService.HashStringWithSalt(hashedPassword, salt);
 
-            //Check if token expired
-            if (loginSession.ExpiresDateTime.AddMinutes(TokenExpiresMinutesThreshold) > DateTime.UtcNow)
-                throw new NotExpiredException("Token not expired!");
-
-            //Create new tokens for user
-            var tokens = CreateAnonymousAccessTokens(TokenExpiresMinutesThreshold);
-
-            //Save new tokens for this session
-            loginSession.RefreshToken = tokens.RefreshToken;
-            loginSession.AccessToken = tokens.AccessToken;
-            loginSession.ExpiresDateTime = tokens.Expires;
-            await _loginSessions.UpdateAsync(loginSession, cancellationToken);
-
-            return tokens;
-        }
-
-        /// <summary>
-        /// Generates a token set for request user if validation passes
-        /// </summary>
-        /// <param name="request">Login request</param>
-        /// <param name="cancellationToken">Process token</param>
-        /// <returns></returns>
-        /// <exception cref="AuthenticationFailureException"></exception>
-        private async Task<AccessTokensResponseModel> ProcessUserAccountLoginRequest(UserAccount user, LoginRequestModel request, CancellationToken cancellationToken)
-        {
-            var hashedPassword = _hashService.HashStringWithSalt(request.HashedPassword, Convert.FromBase64String(user.PasswordSalt));
-            if (hashedPassword != user.Password)
-                throw new AuthenticationFailureException("Password mismatch, login failed");
-
-            //Create tokens
-            var tokens = CreateUserAccessTokens(user, TokenExpiresMinutes);
-
-            //Save the session to the db
-            var session = new UserLoginSession()
+                return Ok();
+            }
+            catch (Exception e)
             {
-                AccessToken = tokens.AccessToken,
-                RefreshToken = tokens.RefreshToken,
-                ExpiresDateTime = tokens.Expires,
-                UserAccountId = user.Id,
-            };
-            await _loginSessions.CreateAsync(session, cancellationToken);
-
-            return tokens;
-        }
-
-        /// <summary>
-        /// Handles taking an expired access token and a refresh token to create a new pair if the state data is correct
-        /// </summary>
-        /// <param name="username">Username of user to refresh</param>
-        /// <param name="model">Token model</param>
-        /// <param name="cancellationToken">Process token</param>
-        /// <returns></returns>
-        /// <exception cref="AuthenticationFailureException"></exception>
-        /// <exception cref="NotExpiredException"></exception>
-        private async Task<AccessTokensResponseModel> ProcessUserAccountRefreshRequest(string username, RefreshTokensRequestModel model, CancellationToken cancellationToken)
-        {
-            //Grab user account
-            var user = (await _userAccounts.GetAccountByUsernameAsync(username, cancellationToken))
-                ?? throw new AuthenticationFailureException("No user with that name exists!");
-
-            //Grab session for user
-            var loginSession = (await _loginSessions.GetSessionByUserIdAsync(user.Id.ToString(), model.RefreshToken, cancellationToken))
-                ?? throw new AuthenticationFailureException("No login sessions for that user");
-
-            //Check if token expired
-            if (loginSession.ExpiresDateTime.AddMinutes(TokenExpiresMinutesThreshold) > DateTime.UtcNow)
-                throw new NotExpiredException("Token not expired!");
-
-            //Create new tokens for user
-            var tokens = CreateUserAccessTokens(user, TokenExpiresMinutesThreshold);
-            
-            //Save new tokens for this session
-            loginSession.RefreshToken = tokens.RefreshToken;
-            loginSession.AccessToken = tokens.AccessToken;
-            loginSession.ExpiresDateTime = tokens.Expires;
-            await _loginSessions.UpdateAsync(loginSession, cancellationToken);
-
-            return tokens;
-        }
-
-        private AccessTokensResponseModel CreateUserAccessTokens(UserAccount user, int expiresMinutes)
-        {
-            var expires = DateTime.UtcNow.AddMinutes(expiresMinutes);
-            var refreshToken = _tokenGenerator.CreateRefreshToken();
-            var accessToken = _tokenGenerator.WriteSecurityToken(
-                _tokenGenerator.CreateJwtSecurityToken(
-                    _tokenGenerator.CreateSigningCredentials(),
-                    _tokenGenerator.CreateUserClaims(user), expiresMinutes));
-
-            return new AccessTokensResponseModel()
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                Expires = expires
-            };
-        }
-
-        private AccessTokensResponseModel CreateAnonymousAccessTokens(int expiresMinutes)
-        {
-            var expires = DateTime.UtcNow.AddMinutes(expiresMinutes);
-            var refreshToken = _tokenGenerator.CreateRefreshToken();
-            var accessToken = _tokenGenerator.WriteSecurityToken(
-                _tokenGenerator.CreateJwtSecurityToken(
-                    _tokenGenerator.CreateSigningCredentials(),
-                    _tokenGenerator.CreateAnonymousClaims(), expiresMinutes));
-
-            return new AccessTokensResponseModel()
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                Expires = expires
-            };
-        }
+                return Unauthorized();
+            }
+        }       
     }
 }

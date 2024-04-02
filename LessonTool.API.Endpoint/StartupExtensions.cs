@@ -6,7 +6,6 @@ using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.API.Infrastructure.Repositories;
 using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Services;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -49,6 +48,8 @@ public static class StartupExtensions
         
         services.AddTransient<IHashService, HashService>();
         services.AddTransient<ITokenGenerationService, TokenGenerationService>();
+        services.AddTransient<ILoginRequestProcessor, LoginRequestProcessor>();
+        services.AddTransient<IPasswordComplexityValidator, PasswordComplexityValidator>();
     }
 
 
