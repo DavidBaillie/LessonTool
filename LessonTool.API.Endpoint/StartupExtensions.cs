@@ -6,8 +6,10 @@ using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.API.Infrastructure.Repositories;
 using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.IdentityModel.Tokens;
 
 namespace LessonTool.API.Endpoint;
 
@@ -53,10 +55,21 @@ public static class StartupExtensions
     }
 
 
-    public static void AddAuthenticationAndAuthorization(this IServiceCollection services)
+    public static void AddAuthenticationAndAuthorization(this IServiceCollection services, IConfiguration configuration)
     {
-        //services.AddAuthentication();
-        services.AddAuthorization();
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidAudience = configuration.GetSection("JwtOptions")["Audience"],
+                ValidIssuer = configuration.GetSection("JwtOptions")["Issuer"],
+                IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration.GetSection("JwtOptions")["Key"])),
+                ValidateAudience = true,
+                ValidateIssuer = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true
+            };
+        });
     }
 
     public static void AddCustomCorsPolicy(this IServiceCollection services)

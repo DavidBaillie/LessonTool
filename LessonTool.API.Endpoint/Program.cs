@@ -17,7 +17,7 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddCosmosDbContext(builder.Configuration);
-        builder.Services.AddAuthenticationAndAuthorization();
+        builder.Services.AddAuthenticationAndAuthorization(builder.Configuration);
         builder.Services.AddServices();
 
         builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
