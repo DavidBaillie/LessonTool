@@ -2,6 +2,7 @@
 
 public interface IPersistentStorage
 {
-    Task<T> GetItemAsync<T>(string key);
-    Task SaveItemAsync<T>(string key, T value);
+    Task<string> GetValueOrDefaultAsync(string key, CancellationToken cancellationToken);
+    Task<bool> TrySaveValueAsync(string key, string value, CancellationToken cancellationToken);
+    Task<bool> TryDeleteValueAsync(string key, CancellationToken cancellationToken);
 }
