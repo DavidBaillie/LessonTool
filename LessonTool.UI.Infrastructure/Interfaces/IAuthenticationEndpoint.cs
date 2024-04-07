@@ -2,7 +2,7 @@
 
 namespace LessonTool.UI.Infrastructure.Interfaces
 {
-    public interface IAuthenticationEndpointProvider
+    public interface IAuthenticationEndpoint
     {
         Task<AccessTokensResponseModel> LoginAsAnonymousUserAsync(CancellationToken cancellationToken);
         Task<AccessTokensResponseModel> LoginAsUserAsync(string username, string password, CancellationToken cancellationToken);
