@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace LessonTool.UI.Infrastructure.HttpServices;
 
-public class LessonApiService : ApiServiceBase<LessonDto>, ILessonRepository
+public class LessonEndpoint : ApiServiceBase<LessonDto>, ILessonRepository
 {
-    public LessonApiService(IServiceProvider serviceProvider) 
+    public LessonEndpoint(IServiceProvider serviceProvider) 
         : base(serviceProvider, ApiEndpointConstants.CommonApiClientName, ApiEndpointConstants.LessonsEndpoint)
     {
 

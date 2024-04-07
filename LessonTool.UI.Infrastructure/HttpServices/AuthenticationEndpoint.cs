@@ -1,9 +1,11 @@
 ﻿using LessonTool.Common.Domain.Models.Authentication;
 using LessonTool.UI.Infrastructure.Constants;
+using LessonTool.UI.Infrastructure.Interfaces;
 
 namespace LessonTool.UI.Infrastructure.HttpServices;
 
-public class AuthenticationEndpointProvider(IHttpClientFactory _clientFactory) 
+public class AuthenticationEndpoint(IHttpClientFactory _clientFactory)  
+    : IAuthenticationEndpoint
 {
     public async Task<AccessTokensResponseModel> LoginAsAnonymousUserAsync(CancellationToken cancellationToken)
     {
