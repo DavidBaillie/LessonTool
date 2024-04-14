@@ -6,11 +6,11 @@ using LessonTool.UI.Infrastructure.Interfaces;
 
 namespace LessonTool.UI.Infrastructure.Authentication;
 
-public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationEndpoint, IPersistentStorage _storage, IHashService _hashing) 
+public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationEndpoint, IHashService _hashing, IBrowserLocalStorage _localStorage) 
     : IAuthenticationStateHandler
 {
-    private const string accessTokenKey = "";
-    private const string rememberSessionKey = "";
+    private const string accessTokenKey = "at";
+    private const string rememberSessionKey = "rs";
 
     private AccessTokensResponseModel tokens;
 
@@ -23,34 +23,36 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
     /// <returns></returns>
     public async Task InitializeAuthenticationStateAsync(CancellationToken cancellationToken)
     {
-        return;
-
         //Grab the remeber state and clear token if needed
-        var rememberSessionValue = await _storage.GetValueOrDefaultAsync(rememberSessionKey, cancellationToken);
+        var rememberSessionValue = await _localStorage.GetValueOrDefaultAsync(rememberSessionKey, cancellationToken);
         if (string.IsNullOrEmpty(rememberSessionValue) || rememberSessionValue.Equals("false", StringComparison.InvariantCultureIgnoreCase))
         {
-            await _storage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
+            Console.WriteLine($"Should not remeber session - deleting key");
+            await _localStorage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
         }
 
-        var accessToken = await _storage.GetValueOrDefaultAsync(accessTokenKey, cancellationToken);
+        var accessToken = await _localStorage.GetValueOrDefaultAsync(accessTokenKey, cancellationToken);
         if (string.IsNullOrEmpty(accessToken))
         {
+            Console.WriteLine($"No local access token, using anon");
             tokens = await _authenticationEndpoint.LoginAsAnonymousUserAsync(cancellationToken);
 
-            await _storage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
-            await _storage.TrySaveValueAsync(rememberSessionKey, true.ToString(), cancellationToken);
+            await _localStorage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
+            await _localStorage.TrySaveValueAsync(rememberSessionKey, true.ToString(), cancellationToken);
         }
         else
         {
+            Console.WriteLine($"Found local access token");
             tokens = accessToken.ParseToAccessTokens();
 
             //Token expired, grab a new anonymous session
             if (tokens.Expires < DateTime.UtcNow)
             {
+                Console.WriteLine($"Token expired, refreshing");
                 tokens = await _authenticationEndpoint.RefreshSessionAsync(tokens.ToRefreshTokensModel(), cancellationToken);
 
-                await _storage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
-                await _storage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
+                await _localStorage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
+                await _localStorage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
             }
         }
     }
@@ -68,8 +70,8 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
         try
         {
             tokens = await _authenticationEndpoint.LoginAsUserAsync(username, _hashing.HashString(password), cancellationToken);
-            await _storage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
-            await _storage.TrySaveValueAsync(rememberSessionKey, rememberSession.ToString(), cancellationToken);
+            await _localStorage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
+            await _localStorage.TrySaveValueAsync(rememberSessionKey, rememberSession.ToString(), cancellationToken);
         }
         catch (Exception ex)
         {
@@ -85,11 +87,11 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
         {
             tokens = await _authenticationEndpoint.LoginAsAnonymousUserAsync(cancellationToken);
 
-            await _storage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
-            await _storage.TryDeleteValueAsync(rememberSessionKey, cancellationToken);
+            await _localStorage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
+            await _localStorage.TryDeleteValueAsync(rememberSessionKey, cancellationToken);
 
-            await _storage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
-            await _storage.TrySaveValueAsync(rememberSessionKey, true.ToString(), cancellationToken);
+            await _localStorage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
+            await _localStorage.TrySaveValueAsync(rememberSessionKey, true.ToString(), cancellationToken);
         }
         catch (Exception ex)
         {

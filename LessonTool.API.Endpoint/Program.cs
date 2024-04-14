@@ -24,7 +24,16 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        builder.Services.AddCustomCorsPolicy();
+        //builder.Services.AddCustomCorsPolicy();
+        builder.Services.AddCors(policy => {
+
+            policy.AddPolicy("CORS_Policy", builder =>
+              builder.WithOrigins("*")
+                .SetIsOriginAllowedToAllowWildcardSubdomains()
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+        });
 
         var app = builder.Build();
 

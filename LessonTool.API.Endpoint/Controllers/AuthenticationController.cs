@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LessonTool.API.Endpoint.Controllers
 {
     [ApiController]
-    [Route("/api/account/")]
+    [Route("/api/account")]
     public class AuthenticationController(IUserAccountRepository _userAccounts, ILoginRequestProcessor _loginRequestProcessor, ITokenGenerationService _tokenGenerator,
         ILoginSessionRepository _loginSessions, IPasswordComplexityValidator _complexityValidator, IHashService _hashService) : ControllerBase
     {

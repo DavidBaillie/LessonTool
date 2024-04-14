@@ -34,6 +34,8 @@ namespace LessonTool.UI.WebApp
             
             builder.Services.AddTransient<IHashService, HashService>();
             builder.Services.AddTransient<IPersistentStorage, BrowserLocalStorageProvider>();
+            builder.Services.AddTransient<IBrowserLocalStorage, BrowserLocalStorageProvider>();
+            builder.Services.AddTransient<IBrowserSessionStorage, BrowserSessionStorageProvider>();
 
             await builder.Build().RunAsync();
         }

@@ -1,14 +1,23 @@
-﻿function getFromStorage(storageKey) {
-    console.log("Reading key: " + storageKey)
+﻿function getFromLocalStorage(storageKey) {
     return localStorage.getItem(storageKey);
 }
 
-function removeFromStorage(storageKey) {
-    console.log("Deleting key: " + storageKey)
+function removeFromLocalStorage(storageKey) {
     localStorage.removeItem(storageKey);
 }
 
-function addToStorage(storageKey, item) {
-    console.log("Saving key: " + storageKey)
+function addToLocalStorage(storageKey, item) {
     localStorage.setItem(storageKey, item);
+}
+
+function getFromSessionStorage(storageKey) {
+    return sessionStorage.getItem(storageKey);
+}
+
+function removeFromSessionStorage(storageKey) {
+    sessionStorage.removeItem(storageKey);
+}
+
+function addToSessionStorage(storageKey, item) {
+    sessionStorage.setItem(storageKey, item);
 }

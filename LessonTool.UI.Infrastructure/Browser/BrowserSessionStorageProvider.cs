@@ -3,13 +3,13 @@ using Microsoft.JSInterop;
 
 namespace LessonTool.UI.Infrastructure.Browser;
 
-public class BrowserLocalStorageProvider(IJSRuntime _jsRuntime) : IBrowserLocalStorage
+public class BrowserSessionStorageProvider(IJSRuntime _jsRuntime) : IBrowserSessionStorage
 {
     public async Task<string> GetValueOrDefaultAsync(string key, CancellationToken cancellationToken)
     {
         try
         {
-            var value = await _jsRuntime.InvokeAsync<string>("getFromLocalStorage", key);
+            var value = await _jsRuntime.InvokeAsync<string>("getFromSessionStorage", key);
             return value ?? string.Empty;
         }
         catch (Exception ex)
@@ -22,7 +22,7 @@ public class BrowserLocalStorageProvider(IJSRuntime _jsRuntime) : IBrowserLocalS
     {
         try
         {
-            await _jsRuntime.InvokeVoidAsync("removeFromLocalStorage", key);
+            await _jsRuntime.InvokeVoidAsync("removeFromSessionStorage", key);
             return true;
         }
         catch (Exception ex)
@@ -35,7 +35,7 @@ public class BrowserLocalStorageProvider(IJSRuntime _jsRuntime) : IBrowserLocalS
     {
         try
         {
-            await _jsRuntime.InvokeVoidAsync("addToLocalStorage", key, value);
+            await _jsRuntime.InvokeVoidAsync("addToSessionStorage", key, value);
             return true;
         }
         catch (Exception ex)
