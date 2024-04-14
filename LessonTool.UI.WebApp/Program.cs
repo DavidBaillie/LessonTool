@@ -1,8 +1,12 @@
 using LessonTool.Common.Domain.Interfaces;
+using LessonTool.Common.Domain.Services;
 using LessonTool.UI.Application.Interfaces;
 using LessonTool.UI.Application.Repositories;
+using LessonTool.UI.Infrastructure.Authentication;
+using LessonTool.UI.Infrastructure.Browser;
 using LessonTool.UI.Infrastructure.Constants;
 using LessonTool.UI.Infrastructure.HttpServices;
+using LessonTool.UI.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -21,15 +25,15 @@ namespace LessonTool.UI.WebApp
                 options.BaseAddress = new Uri("https://localhost:44360");
             });
 
+
+            builder.Services.AddScoped<IAuthenticationStateHandler, AuthenticationStateHandler>();
             builder.Services.AddScoped<IFullLessonRepository, FullLessonRepository>();
-
-            //API Callers
-            //builder.Services.AddScoped<ILessonRepository, LessonApiService>();
-            //builder.Services.AddScoped<ISectionRepository, SectionApiService>();
-
-            //TEST Callers
-            builder.Services.AddSingleton<ILessonRepository, MockLessonApiService>();
-            builder.Services.AddSingleton<ISectionRepository, MockSectionApiService>();
+            builder.Services.AddScoped<ILessonRepository, LessonEndpoint>();
+            builder.Services.AddScoped<ISectionRepository, SectionEndpoint>();
+            builder.Services.AddScoped<IAuthenticationEndpoint, AuthenticationEndpoint>();
+            
+            builder.Services.AddTransient<IHashService, HashService>();
+            builder.Services.AddTransient<IPersistentStorage, BrowserLocalStorageProvider>();
 
             await builder.Build().RunAsync();
         }

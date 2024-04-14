@@ -23,6 +23,8 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
     /// <returns></returns>
     public async Task InitializeAuthenticationStateAsync(CancellationToken cancellationToken)
     {
+        return;
+
         //Grab the remeber state and clear token if needed
         var rememberSessionValue = await _storage.GetValueOrDefaultAsync(rememberSessionKey, cancellationToken);
         if (string.IsNullOrEmpty(rememberSessionValue) || rememberSessionValue.Equals("false", StringComparison.InvariantCultureIgnoreCase))
