@@ -6,6 +6,7 @@ using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.API.Infrastructure.Repositories;
 using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Services;
+using LessonTool.UI.Infrastructure.HttpServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -43,8 +44,13 @@ public static class StartupExtensions
 
     public static void AddServices(this IServiceCollection services)
     {
-        services.AddScoped<ILessonRepository, EFCosmosLessonRepository>();
-        services.AddScoped<ISectionRepository, EfCosmosSectionRepository>();
+        //services.AddScoped<ILessonRepository, EFCosmosLessonRepository>();
+        //services.AddScoped<ISectionRepository, EfCosmosSectionRepository>();
+
+        //TODO - Swap back after testing
+        services.AddScoped<ILessonRepository, MockLessonRepositoryService>();
+        services.AddScoped<ISectionRepository, MockSectionRepositoryService>();
+
         services.AddScoped<IUserAccountRepository, EFCosmosUserAccountRepository>();
         services.AddScoped<ILoginSessionRepository, EFCosmosLoginSessionRepository>();
         
