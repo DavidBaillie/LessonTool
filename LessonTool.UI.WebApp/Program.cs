@@ -38,12 +38,13 @@ namespace LessonTool.UI.WebApp
 
 
             builder.Services.AddSingleton<IAuthenticationStateHandler, AuthenticationStateHandler>();
-            builder.Services.AddSingleton<IFullLessonRepository, FullLessonRepository>();
-            builder.Services.AddSingleton<ILessonRepository, LessonEndpoint>();
-            builder.Services.AddSingleton<ISectionRepository, SectionEndpoint>();
-            builder.Services.AddSingleton<IAuthenticationEndpoint, AuthenticationEndpoint>();
 
+            builder.Services.AddTransient<IFullLessonRepository, FullLessonRepository>();
+            builder.Services.AddTransient<ILessonRepository, LessonEndpoint>();
+            builder.Services.AddTransient<ISectionRepository, SectionEndpoint>();
+            builder.Services.AddTransient<IAuthenticationEndpoint, AuthenticationEndpoint>();
             builder.Services.AddTransient<AuthenticationTokenClientMiddleware>();
+            
             builder.Services.AddTransient<IHashService, HashService>();
             builder.Services.AddTransient<IPersistentStorage, BrowserLocalStorageProvider>();
             builder.Services.AddTransient<IBrowserLocalStorage, BrowserLocalStorageProvider>();
