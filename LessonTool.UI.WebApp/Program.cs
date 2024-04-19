@@ -7,6 +7,7 @@ using LessonTool.UI.Infrastructure.Browser;
 using LessonTool.UI.Infrastructure.Constants;
 using LessonTool.UI.Infrastructure.HttpServices;
 using LessonTool.UI.Infrastructure.Interfaces;
+using LessonTool.UI.WebApp.Middleware;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -20,18 +21,29 @@ namespace LessonTool.UI.WebApp
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
-            builder.Services.AddHttpClient(ApiEndpointConstants.CommonApiClientName, options =>
-            {
-                options.BaseAddress = new Uri("https://localhost:44360");
-            });
+            //Regular Client with Auth
+            builder.Services
+                .AddHttpClient(ApiEndpointConstants.CommonApiClientName, options =>
+                    {
+                        options.BaseAddress = new Uri("https://localhost:44360");
+                    })
+                .AddHttpMessageHandler<AuthenticationTokenClientMiddleware>();
+
+            //Special client with no auth
+            builder.Services
+                .AddHttpClient(ApiEndpointConstants.AuthenticationApiClientName, options =>
+                    {
+                        options.BaseAddress = new Uri("https://localhost:44360");
+                    });
 
 
-            builder.Services.AddScoped<IAuthenticationStateHandler, AuthenticationStateHandler>();
-            builder.Services.AddScoped<IFullLessonRepository, FullLessonRepository>();
-            builder.Services.AddScoped<ILessonRepository, LessonEndpoint>();
-            builder.Services.AddScoped<ISectionRepository, SectionEndpoint>();
-            builder.Services.AddScoped<IAuthenticationEndpoint, AuthenticationEndpoint>();
-            
+            builder.Services.AddSingleton<IAuthenticationStateHandler, AuthenticationStateHandler>();
+            builder.Services.AddSingleton<IFullLessonRepository, FullLessonRepository>();
+            builder.Services.AddSingleton<ILessonRepository, LessonEndpoint>();
+            builder.Services.AddSingleton<ISectionRepository, SectionEndpoint>();
+            builder.Services.AddSingleton<IAuthenticationEndpoint, AuthenticationEndpoint>();
+
+            builder.Services.AddTransient<AuthenticationTokenClientMiddleware>();
             builder.Services.AddTransient<IHashService, HashService>();
             builder.Services.AddTransient<IPersistentStorage, BrowserLocalStorageProvider>();
             builder.Services.AddTransient<IBrowserLocalStorage, BrowserLocalStorageProvider>();

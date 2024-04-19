@@ -1,6 +1,7 @@
 ﻿using LessonTool.Common.Domain.Extensions;
 using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Models.Authentication;
+using LessonTool.UI.Application.Exceptions;
 using LessonTool.UI.Application.Interfaces;
 using LessonTool.UI.Infrastructure.Interfaces;
 
@@ -14,7 +15,17 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
 
     private AccessTokensResponseModel tokens;
 
-    public string AccessToken => tokens is not null ? tokens.AccessToken : throw new ApplicationException("No Access token available!");
+    //public string AccessToken => tokens?.AccessToken ?? throw new ApplicationException("No Access token available!");
+    public string AccessToken
+    {
+        get
+        {
+            if (tokens is null) throw new ApplicationException($"No tokens are available to the web page!");
+            if (string.IsNullOrEmpty(tokens.AccessToken)) throw new ApplicationException($"Tokens found, missing access token!");
+
+            return tokens.AccessToken;
+        }
+    }
 
     /// <summary>
     /// Called during page startup, handles checking token states and generating the needed data to call the API
@@ -42,19 +53,30 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
         }
         else
         {
-            Console.WriteLine($"Found local access token");
             tokens = accessToken.ParseToAccessTokens();
+            Console.WriteLine($"Found local access token: {tokens.AccessToken}");
 
             //Token expired, grab a new anonymous session
             if (tokens.Expires < DateTime.UtcNow)
             {
                 Console.WriteLine($"Token expired, refreshing");
-                tokens = await _authenticationEndpoint.RefreshSessionAsync(tokens.ToRefreshTokensModel(), cancellationToken);
+                try
+                {
+                    tokens = await _authenticationEndpoint.RefreshSessionAsync(tokens.ToRefreshTokensModel(), cancellationToken);
+                    Console.WriteLine("Token refreshed successfully");
+                }
+                catch (BadHttpResponseException)
+                {
+                    Console.WriteLine("Failed to refresh token, requesting new anonymous session");
+                    tokens = await _authenticationEndpoint.LoginAsAnonymousUserAsync(cancellationToken);
+                }
 
                 await _localStorage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
                 await _localStorage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
             }
         }
+
+        Console.WriteLine($"Tokens object null: {tokens is null}");
     }
 
     /// <summary>

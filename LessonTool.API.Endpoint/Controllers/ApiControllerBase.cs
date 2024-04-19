@@ -1,9 +1,11 @@
 ﻿using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LessonTool.API.Endpoint.Controllers;
 
+[Authorize]
 public abstract class ApiControllerBase<T> : ControllerBase where T : EntityDtoBase
 {
     private readonly IRepository<T> _repository;

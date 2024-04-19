@@ -1,40 +1,13 @@
 ﻿@page "/"
 
+@using LessonTool.UI.Infrastructure.Interfaces
 @using LessonTool.UI.WebApp.Components.Lesson
 
 @inherits BaseComponent<Home>
-
-@inject LessonTool.UI.Application.Interfaces.IPersistentStorage storage
 
 <PageTitle>Lessons</PageTitle> 
 
 <div class="d-flex flex-column align-items-center mt-5">
     <p>Welcome to the lesson tool where you will find lessons and stuff...</p>
     <p>Well not really stuff, just lessons.</p>
-
-    <button class="btn btn-primary" onclick="@(async () => await Add())">Add</button>
-    <p>@message</p>
 </div>
-
-@code {
-    private string message = "PLACEHOLDER";
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            // await storage.TrySaveValueAsync("index", "Something", cancellationToken);
-            message = await storage.GetValueOrDefaultAsync("index", cancellationToken);
-        }
-        catch (Exception e)
-        {
-            message = $"{e}";
-            Console.WriteLine(e);
-        }
-    }
-
-    private async Task Add()
-    {
-        await storage.TrySaveValueAsync("index", "Something", cancellationToken);
-    }
-}

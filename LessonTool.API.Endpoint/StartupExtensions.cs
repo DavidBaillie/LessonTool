@@ -57,19 +57,20 @@ public static class StartupExtensions
 
     public static void AddAuthenticationAndAuthorization(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
             {
-                ValidAudience = configuration.GetSection("JwtOptions")["Audience"],
-                ValidIssuer = configuration.GetSection("JwtOptions")["Issuer"],
-                IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration.GetSection("JwtOptions")["Key"])),
-                ValidateAudience = true,
-                ValidateIssuer = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true
-            };
-        });
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidAudience = configuration.GetSection("JwtOptions")["Audience"],
+                    ValidIssuer = configuration.GetSection("JwtOptions")["Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration.GetSection("JwtOptions")["Key"])),
+                    ValidateAudience = true,
+                    ValidateIssuer = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true
+                };
+            });
     }
 
     public static void AddCustomCorsPolicy(this IServiceCollection services)

@@ -1,6 +1,7 @@
 ﻿using LessonTool.Common.Domain.Constants;
 using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Models.Authentication;
+using LessonTool.UI.Application.Exceptions;
 using LessonTool.UI.Infrastructure.Constants;
 using LessonTool.UI.Infrastructure.Interfaces;
 using System.Text.Json;
@@ -24,7 +25,8 @@ public class AuthenticationEndpoint(IHttpClientFactory _clientFactory, IHashServ
                 RequestToken = TokenConstants.AuthenticationRequestToken,
             }, jsonOptions));
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            throw new BadHttpResponseException(response);
 
         var tokens = await DeserializeResponseAsync<AccessTokensResponseModel>(response, jsonOptions, cancellationToken);
         return tokens;
@@ -41,7 +43,8 @@ public class AuthenticationEndpoint(IHttpClientFactory _clientFactory, IHashServ
                 RequestToken = TokenConstants.AuthenticationRequestToken
             }, jsonOptions));
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            throw new BadHttpResponseException(response);
 
         var tokens = await DeserializeResponseAsync<AccessTokensResponseModel>(response, jsonOptions, cancellationToken);
         return tokens;
@@ -57,6 +60,9 @@ public class AuthenticationEndpoint(IHttpClientFactory _clientFactory, IHashServ
                 RefreshToken = currentTokens.RefreshToken,
                 RequestToken = TokenConstants.AuthenticationRequestToken
             }, jsonOptions));
+
+        if (!response.IsSuccessStatusCode)
+            throw new BadHttpResponseException(response);
 
         var tokens = await DeserializeResponseAsync<AccessTokensResponseModel>(response, jsonOptions, cancellationToken);
         return tokens;
