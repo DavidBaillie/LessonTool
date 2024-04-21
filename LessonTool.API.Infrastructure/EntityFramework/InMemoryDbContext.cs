@@ -41,5 +41,56 @@ public class InMemoryDbContext : CosmosDbContext
                     PasswordSalt = "zX/Tt8xSIuQ/D8YDngTbES16Tx2JFPa9qcTlUakv4afU3lBEgy6TrZa0AXiKjRLjUYsD+sZIQ8XRxMqrME2gdw==",
                     PasswordResetToken = string.Empty
                 });
+
+        modelBuilder.Entity<CosmosLesson>()
+            .HasData(
+            new CosmosLesson()
+            {
+                Id = "41ba1eef-2773-482a-8129-e51ce5531c69",
+                Name = "Lorem ipsum dolor sit",
+                Description = "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa",
+                VisibleDate = DateTime.MinValue.AddDays(1),
+                PlannedDate = DateTime.UtcNow,
+                Type = "Lesson"
+            },
+            new CosmosLesson()
+            {
+                Id = "7023ece4-547d-4c44-95f1-1cc26782a085",
+                Name = "Quis nostrud exercitation ullamco",
+                Description = "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa",
+                VisibleDate = DateTime.MinValue.AddDays(1),
+                PlannedDate = DateTime.UtcNow.AddDays(1),
+                Type = "Lesson"
+            });
+
+        modelBuilder.Entity<CosmosSection>()
+            .HasData(
+            new CosmosSection()
+            {
+                Id = "a3f151d3-dd7a-4d9d-8ac2-cac919b02ef1",
+                LessonId = "41ba1eef-2773-482a-8129-e51ce5531c69",
+                Title = "Excepteur sint occaecat",
+                Content = "sunt in culpa qui officia deserunt mollit anim id est laborum",
+                CreatedDate = DateTime.MinValue.AddDays(1),
+                Type = "Section"
+            },
+            new CosmosSection()
+            {
+                Id = "96427393-76b5-48c2-ac3d-f8aec785a497",
+                LessonId = "41ba1eef-2773-482a-8129-e51ce5531c69",
+                Title = "Excepteur sint occaecat",
+                Content = "sunt in culpa qui officia deserunt mollit anim id est laborum",
+                CreatedDate = DateTime.MinValue.AddDays(1),
+                Type = "Section"
+            },
+            new CosmosSection()
+            {
+                Id = "63512242-aeaa-493e-a4ef-ba83afc7e51f",
+                LessonId = "7023ece4-547d-4c44-95f1-1cc26782a085",
+                Title = "Excepteur sint occaecat",
+                Content = "sunt in culpa qui officia deserunt mollit anim id est laborum",
+                CreatedDate = DateTime.MinValue.AddDays(1),
+                Type = "Section"
+            });
     }
 }

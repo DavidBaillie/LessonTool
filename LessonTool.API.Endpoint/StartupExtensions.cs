@@ -50,8 +50,8 @@ public static class StartupExtensions
         //services.AddScoped<ISectionRepository, EfCosmosSectionRepository>();
 
         //TODO - Swap back after testing
-        services.AddScoped<ILessonRepository, MockLessonRepositoryService>();
-        services.AddScoped<ISectionRepository, MockSectionRepositoryService>();
+        services.AddScoped<ILessonRepository, EFCosmosLessonRepository>();
+        services.AddScoped<ISectionRepository, EfCosmosSectionRepository>();
 
         services.AddScoped<IUserAccountRepository, EFCosmosUserAccountRepository>();
         services.AddScoped<ILoginSessionRepository, EFCosmosLoginSessionRepository>();
