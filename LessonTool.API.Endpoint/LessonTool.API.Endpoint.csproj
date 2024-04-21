@@ -20,4 +20,8 @@
     <ProjectReference Include="..\LessonTool.Common.Domain\LessonTool.Common.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Policies\" />
+  </ItemGroup>
+
 </Project>

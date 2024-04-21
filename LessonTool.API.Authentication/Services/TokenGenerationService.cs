@@ -1,4 +1,5 @@
-﻿using LessonTool.API.Authentication.Interfaces;
+﻿using LessonTool.API.Authentication.Constants;
+using LessonTool.API.Authentication.Interfaces;
 using LessonTool.API.Authentication.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -33,7 +34,7 @@ public class TokenGenerationService(IConfiguration _configuration) : ITokenGener
         return new List<Claim>
         {
             new Claim(ClaimTypes.Name, "Anonymous"),
-            new Claim(ClaimTypes.Role, "Read")
+            new Claim(ClaimTypes.Role, UserClaimConstants.Reader)
         };
     }
 

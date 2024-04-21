@@ -18,27 +18,29 @@ public static class StartupExtensions
 {
     public static void AddCosmosDbContext(this IServiceCollection services, IConfiguration configuration)
     {
+#if DEBUG
+        //If in debug and using a memory database, initialize only that
+        if (configuration["UseInMemory"] == "true")
+        {
+            services.AddDbContext<CosmosDbContext, InMemoryDbContext>(options =>
+            {
+                options.UseSqlite("DataSource=file::memory:?cache=shared");
+            });
+
+            services.AddTransient<SqlLiteDatabaseInitializer>();
+            services.AddSingleton<SqlLiteConnectionPersistor>();
+         
+            return;
+        }
+#endif
+
+        //Setup standard cosmos db
         services.AddDbContext<CosmosDbContext>(options =>
         {
-#if DEBUG
-            if (configuration["UseInMemory"] == "true")
-            {
-                options.UseInMemoryDatabase("LessonToolDatabase")
-                    .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning));
-            }
-            else
-            {
-                options.UseCosmos(
-                    configuration.GetSection("CosmosOptions")["Endpoint"],
-                    configuration.GetSection("CosmosOptions")["AccountKey"],
-                    configuration.GetSection("CosmosOptions")["DatabaseName"]);
-            }
-#else
             options.UseCosmos(
                     configuration.GetSection("CosmosOptions")["Endpoint"],
                     configuration.GetSection("CosmosOptions")["AccountKey"],
                     configuration.GetSection("CosmosOptions")["DatabaseName"]);
-#endif
         });
     }
 

@@ -1,9 +1,5 @@
 using LessonTool.API.Infrastructure.EntityFramework;
-using LessonTool.API.Infrastructure.Models;
 using LessonTool.API.Infrastructure.Options;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using System.Configuration;
 
 namespace LessonTool.API.Endpoint;
 
@@ -55,6 +51,18 @@ public class Program
         app.UseAuthorization();
 
         app.MapControllers();
+
+#if DEBUG
+        //Setup for the in memory option
+        if (builder.Configuration["UseInMemory"] == "true")
+        {
+            using (var scope = app.Services.CreateScope())
+            {
+                scope.ServiceProvider.GetRequiredService<SqlLiteConnectionPersistor>();
+                scope.ServiceProvider.GetRequiredService<SqlLiteDatabaseInitializer>();
+            }
+        }
+#endif
 
         app.Run();
     }
