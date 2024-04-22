@@ -1,5 +1,7 @@
-﻿using LessonTool.Common.Domain.Interfaces;
+﻿using LessonTool.API.Authentication.Constants;
+using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LessonTool.API.Endpoint.Controllers;
@@ -17,7 +19,7 @@ public class SectionController : ApiControllerBase<SectionDto>
         _sectionRepository = sectionRepository;
     }
 
-
+    [Authorize(Policy = PolicyNameConstants.ReaderPolicy)]
     [HttpGet("/api/lessons/{id}/sections")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<SectionDto>>> GetByLessonAsync(Guid id, CancellationToken cancellationToken = default)

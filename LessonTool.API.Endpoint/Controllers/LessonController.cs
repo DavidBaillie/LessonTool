@@ -1,5 +1,7 @@
-﻿using LessonTool.Common.Domain.Interfaces;
+﻿using LessonTool.API.Authentication.Constants;
+using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LessonTool.API.Endpoint.Controllers;
@@ -16,7 +18,7 @@ public class LessonController : ApiControllerBase<LessonDto>
         _lessonRepository = lessonRepository;
     }
 
-
+    [Authorize(Policy = PolicyNameConstants.ReaderPolicy)]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<LessonDto>>> GetAllAsync(DateTime? min = null, DateTime? max = null, bool includeSections = false, CancellationToken cancellationToken = default)

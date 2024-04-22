@@ -1,4 +1,5 @@
-﻿using LessonTool.API.Authentication.Interfaces;
+﻿using LessonTool.API.Authentication.Constants;
+using LessonTool.API.Authentication.Interfaces;
 using LessonTool.API.Authentication.Services;
 using LessonTool.API.Domain.Interfaces;
 using LessonTool.API.Infrastructure.EntityFramework;
@@ -49,6 +50,8 @@ public static class StartupExtensions
         //services.AddScoped<ILessonRepository, EFCosmosLessonRepository>();
         //services.AddScoped<ISectionRepository, EfCosmosSectionRepository>();
 
+        services.AddHttpContextAccessor();
+
         //TODO - Swap back after testing
         services.AddScoped<ILessonRepository, EFCosmosLessonRepository>();
         services.AddScoped<ISectionRepository, EfCosmosSectionRepository>();
@@ -79,6 +82,24 @@ public static class StartupExtensions
                     ValidateIssuerSigningKey = true
                 };
             });
+
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(PolicyNameConstants.ReaderPolicy, 
+                x => x.RequireRole(UserClaimConstants.Admin, UserClaimConstants.Teacher, UserClaimConstants.Parent, UserClaimConstants.Student, UserClaimConstants.Reader));
+
+            options.AddPolicy(PolicyNameConstants.StudentPolicy,
+                x => x.RequireRole(UserClaimConstants.Admin, UserClaimConstants.Teacher, UserClaimConstants.Parent, UserClaimConstants.Student));
+
+            options.AddPolicy(PolicyNameConstants.ParentPolicy,
+                x => x.RequireRole(UserClaimConstants.Admin, UserClaimConstants.Teacher, UserClaimConstants.Parent));
+
+            options.AddPolicy(PolicyNameConstants.TeacherPolicy,
+                x => x.RequireRole(UserClaimConstants.Admin, UserClaimConstants.Teacher));
+
+            options.AddPolicy(PolicyNameConstants.AdminPolicy,
+                x => x.RequireRole(UserClaimConstants.Admin));
+        });
     }
 
     public static void AddCustomCorsPolicy(this IServiceCollection services)
