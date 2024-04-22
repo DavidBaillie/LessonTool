@@ -10,7 +10,7 @@ public class CosmosDbContext : DbContext
     public DbSet<CosmosUserAccount> UserAccounts { get; set; }
     public DbSet<CosmosLoginSession> LoginSessions { get; set; }
 
-    public CosmosDbContext(DbContextOptions<CosmosDbContext> options) : base(options) { }
+    public CosmosDbContext(DbContextOptions options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

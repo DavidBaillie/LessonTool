@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject LessonTool.UI.Infrastructure.Interfaces.IAuthenticationStateHandler authHandler
+
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
@@ -21,4 +23,36 @@
     </div>
 </nav>
 
-@Body
+@if (hasDied)
+{
+    <p>She's dead captain!</p>    
+} 
+else if(hasInitialized)
+{
+    @Body
+}
+else
+{
+    <p>Loading</p>
+}
+
+@code {
+    private bool hasInitialized = false;
+
+    private bool hasDied = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await base.OnInitializedAsync();
+            await authHandler.InitializeAuthenticationStateAsync(CancellationToken.None);
+
+            hasInitialized = true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+    }
+}

@@ -13,6 +13,7 @@ public static class CosmosUserAccountExtensions
             Id = userAccount.Id.ToString(),
             Type = CosmosConstants.UserAccountTypeName,
             Username = userAccount.Username,
+            AccountType = userAccount.AccountType,
             Password = userAccount.Password,
             PasswordSalt = userAccount.PasswordSalt,
             PasswordResetToken = userAccount.PasswordResetToken
@@ -25,6 +26,7 @@ public static class CosmosUserAccountExtensions
         {
             Id = new Guid(userAccount.Id.ToString()),
             Username = userAccount.Username,
+            AccountType = userAccount.AccountType,
             Password = userAccount.Password,
             PasswordSalt = userAccount.PasswordSalt,
             PasswordResetToken= userAccount.PasswordResetToken
