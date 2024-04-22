@@ -27,7 +27,7 @@ public class AuthenticationController(IUserAccountRepository _userAccounts, ILog
 
             //Anonymous account for readonly
             if (loginRequest.Username == TokenConstants.AnonymousAccountToken.ToString() && loginRequest.HashedPassword == TokenConstants.AnonymousAccountToken.ToString())
-                return await _loginRequestProcessor.ProcessAnonymousLoginRequest(cancellationToken);
+                return _loginRequestProcessor.ProcessAnonymousLoginRequest();
             //Actual account for read/write
             else
             {
@@ -40,7 +40,7 @@ public class AuthenticationController(IUserAccountRepository _userAccounts, ILog
                 if (string.IsNullOrWhiteSpace(user.Password))
                     return Conflict();
 
-                return await _loginRequestProcessor.ProcessUserAccountLoginRequest(user, loginRequest, cancellationToken);
+                return _loginRequestProcessor.ProcessUserAccountLoginRequest(user, loginRequest);
             }
         }
         catch (AuthenticationFailureException authEx)
@@ -70,12 +70,12 @@ public class AuthenticationController(IUserAccountRepository _userAccounts, ILog
             //Process the token for a new session
             if (username == "Anonymous")
             {
-                return await _loginRequestProcessor.ProcessAnonymousRefreshRequest(tokens, cancellationToken);
+                return _loginRequestProcessor.ProcessAnonymousRefreshRequest(tokens);
             }
             else
             {
                 var user = await _userAccounts.GetAccountByUsernameAsync(username, cancellationToken);
-                return await _loginRequestProcessor.ProcessUserAccountRefreshRequest(user, tokens, cancellationToken);
+                return _loginRequestProcessor.ProcessUserAccountRefreshRequest(user, tokens);
             }
         }
         catch (NotExpiredException)
@@ -125,6 +125,8 @@ public class AuthenticationController(IUserAccountRepository _userAccounts, ILog
         }
     }
 
+#if DEBUG
+
     [HttpGet("test")]
     public ActionResult<PasswordData> GetHashedData(string password)
     {
@@ -136,4 +138,6 @@ public class AuthenticationController(IUserAccountRepository _userAccounts, ILog
     }
 
     public record PasswordData(string sentHash, string dbHash, string salt);
+#endif
+
 }

@@ -1,14 +1,14 @@
 ﻿using LessonTool.API.Authentication.Exceptions;
 using LessonTool.API.Authentication.Interfaces;
 using LessonTool.API.Authentication.Models;
-using LessonTool.API.Domain.Interfaces;
 using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Models.Authentication;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Authentication;
 
 namespace LessonTool.API.Authentication.Services;
 
-public class LoginRequestProcessor(ILoginSessionRepository _loginSessions, ITokenGenerationService _tokenGenerator, IHashService _hashService) 
+public class LoginRequestProcessor(ITokenGenerationService _tokenGenerator, IHashService _hashService) 
     : ILoginRequestProcessor
 {
     private const int TokenExpiresMinutes = 120;
@@ -17,23 +17,8 @@ public class LoginRequestProcessor(ILoginSessionRepository _loginSessions, IToke
     /// <summary>
     /// Generates a token set for the anonymous user to read only with limit access
     /// </summary>
-    public async Task<AccessTokensResponseModel> ProcessAnonymousLoginRequest(CancellationToken cancellationToken)
-    {
-        //Create tokens
-        var tokens = CreateAnonymousAccessTokens(TokenExpiresMinutes);
-
-        //Save the session to the db
-        await _loginSessions.CreateAsync(
-            new UserLoginSession()
-            {
-                AccessToken = tokens.AccessToken,
-                RefreshToken = tokens.RefreshToken,
-                ExpiresDateTime = tokens.Expires,
-                UserAccountId = Guid.Empty,
-            }, cancellationToken);
-
-        return tokens;
-    }
+    public AccessTokensResponseModel ProcessAnonymousLoginRequest()
+        => CreateAnonymousAccessTokens(TokenExpiresMinutes);
 
     /// <summary>
     /// Handles taking an expired access token and a refresh token to create a new pair if the state data is correct
@@ -43,26 +28,16 @@ public class LoginRequestProcessor(ILoginSessionRepository _loginSessions, IToke
     /// <returns></returns>
     /// <exception cref="AuthenticationFailureException"></exception>
     /// <exception cref="NotExpiredException"></exception>
-    public async Task<AccessTokensResponseModel> ProcessAnonymousRefreshRequest(RefreshTokensRequestModel model, CancellationToken cancellationToken)
+    public AccessTokensResponseModel ProcessAnonymousRefreshRequest(RefreshTokensRequestModel model)
     {
-        //Grab session for anonymous user
-        var loginSession = (await _loginSessions.GetSessionByUserIdAsync(Guid.Empty.ToString(), model.RefreshToken, cancellationToken))
-            ?? throw new AuthenticationException("No login sessions for that user");
+        var token = new JwtSecurityToken(model.Token);
 
         //Check if token expired
-        if (loginSession.ExpiresDateTime.AddMinutes(TokenExpiresMinutesThreshold) > DateTime.UtcNow)
+        if (token.ValidTo.AddMinutes(TokenExpiresMinutesThreshold) > DateTime.UtcNow)
             throw new NotExpiredException("Token not expired!");
 
         //Create new tokens for user
-        var tokens = CreateAnonymousAccessTokens(TokenExpiresMinutesThreshold);
-
-        //Save new tokens for this session
-        loginSession.RefreshToken = tokens.RefreshToken;
-        loginSession.AccessToken = tokens.AccessToken;
-        loginSession.ExpiresDateTime = tokens.Expires;
-        await _loginSessions.UpdateAsync(loginSession, cancellationToken);
-
-        return tokens;
+        return CreateAnonymousAccessTokens(TokenExpiresMinutesThreshold);
     }
 
     /// <summary>
@@ -72,26 +47,14 @@ public class LoginRequestProcessor(ILoginSessionRepository _loginSessions, IToke
     /// <param name="cancellationToken">Process token</param>
     /// <returns></returns>
     /// <exception cref="AuthenticationFailureException"></exception>
-    public async Task<AccessTokensResponseModel> ProcessUserAccountLoginRequest(UserAccount user, LoginRequestModel request, CancellationToken cancellationToken)
+    public AccessTokensResponseModel ProcessUserAccountLoginRequest(UserAccount user, LoginRequestModel request)
     {
         var hashedPassword = _hashService.HashStringWithSalt(request.HashedPassword, Convert.FromBase64String(user.PasswordSalt));
         if (hashedPassword != user.Password)
             throw new AuthenticationException("Password mismatch, login failed");
 
         //Create tokens
-        var tokens = CreateUserAccessTokens(user, TokenExpiresMinutes);
-
-        //Save the session to the db
-        var session = new UserLoginSession()
-        {
-            AccessToken = tokens.AccessToken,
-            RefreshToken = tokens.RefreshToken,
-            ExpiresDateTime = tokens.Expires,
-            UserAccountId = user.Id,
-        };
-        await _loginSessions.CreateAsync(session, cancellationToken);
-
-        return tokens;
+        return CreateUserAccessTokens(user, TokenExpiresMinutes);
     }
 
     /// <summary>
@@ -103,26 +66,16 @@ public class LoginRequestProcessor(ILoginSessionRepository _loginSessions, IToke
     /// <returns></returns>
     /// <exception cref="AuthenticationFailureException"></exception>
     /// <exception cref="NotExpiredException"></exception>
-    public async Task<AccessTokensResponseModel> ProcessUserAccountRefreshRequest(UserAccount user, RefreshTokensRequestModel model, CancellationToken cancellationToken)
+    public AccessTokensResponseModel ProcessUserAccountRefreshRequest(UserAccount user, RefreshTokensRequestModel model)
     {
-        //Grab session for user
-        var loginSession = (await _loginSessions.GetSessionByUserIdAsync(user.Id.ToString(), model.RefreshToken, cancellationToken))
-            ?? throw new AuthenticationException("No login sessions for that user");
+        var token = new JwtSecurityToken(model.Token);
 
         //Check if token expired
-        if (loginSession.ExpiresDateTime.AddMinutes(TokenExpiresMinutesThreshold) > DateTime.UtcNow)
+        if (token.ValidTo.AddMinutes(TokenExpiresMinutesThreshold) > DateTime.UtcNow)
             throw new NotExpiredException("Token not expired!");
 
         //Create new tokens for user
-        var tokens = CreateUserAccessTokens(user, TokenExpiresMinutesThreshold);
-
-        //Save new tokens for this session
-        loginSession.RefreshToken = tokens.RefreshToken;
-        loginSession.AccessToken = tokens.AccessToken;
-        loginSession.ExpiresDateTime = tokens.Expires;
-        await _loginSessions.UpdateAsync(loginSession, cancellationToken);
-
-        return tokens;
+        return CreateUserAccessTokens(user, TokenExpiresMinutesThreshold);
     }
 
     /// <summary>
