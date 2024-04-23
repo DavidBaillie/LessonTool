@@ -12,13 +12,13 @@ public class LoginRequestProcessor(ITokenGenerationService _tokenGenerator, IHas
     : ILoginRequestProcessor
 {
     private const int TokenExpiresMinutes = 120;
-    private const int TokenExpiresMinutesThreshold = -5;
+    private const int ExpiredTokenThreshold = -5;
 
     /// <summary>
     /// Generates a token set for the anonymous user to read only with limit access
     /// </summary>
     public AccessTokensResponseModel ProcessAnonymousLoginRequest()
-        => CreateAnonymousAccessTokens(TokenExpiresMinutes);
+        => CreateAnonymousAccessTokens();
 
     /// <summary>
     /// Handles taking an expired access token and a refresh token to create a new pair if the state data is correct
@@ -33,11 +33,11 @@ public class LoginRequestProcessor(ITokenGenerationService _tokenGenerator, IHas
         var token = new JwtSecurityToken(model.Token);
 
         //Check if token expired
-        if (token.ValidTo.AddMinutes(TokenExpiresMinutesThreshold) > DateTime.UtcNow)
+        if (token.ValidTo.AddMinutes(ExpiredTokenThreshold) > DateTime.UtcNow)
             throw new NotExpiredException("Token not expired!");
 
         //Create new tokens for user
-        return CreateAnonymousAccessTokens(TokenExpiresMinutesThreshold);
+        return CreateAnonymousAccessTokens();
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public class LoginRequestProcessor(ITokenGenerationService _tokenGenerator, IHas
             throw new AuthenticationException("Password mismatch, login failed");
 
         //Create tokens
-        return CreateUserAccessTokens(user, TokenExpiresMinutes);
+        return CreateUserAccessTokens(user);
     }
 
     /// <summary>
@@ -71,11 +71,11 @@ public class LoginRequestProcessor(ITokenGenerationService _tokenGenerator, IHas
         var token = new JwtSecurityToken(model.Token);
 
         //Check if token expired
-        if (token.ValidTo.AddMinutes(TokenExpiresMinutesThreshold) > DateTime.UtcNow)
+        if (token.ValidTo.AddMinutes(ExpiredTokenThreshold) > DateTime.UtcNow)
             throw new NotExpiredException("Token not expired!");
 
         //Create new tokens for user
-        return CreateUserAccessTokens(user, TokenExpiresMinutesThreshold);
+        return CreateUserAccessTokens(user);
     }
 
     /// <summary>
@@ -84,14 +84,14 @@ public class LoginRequestProcessor(ITokenGenerationService _tokenGenerator, IHas
     /// <param name="user">User to create token for</param>
     /// <param name="expiresMinutes">Minutes until the token expires</param>
     /// <returns></returns>
-    private AccessTokensResponseModel CreateUserAccessTokens(UserAccount user, int expiresMinutes)
+    private AccessTokensResponseModel CreateUserAccessTokens(UserAccount user)
     {
-        var expires = DateTime.UtcNow.AddMinutes(expiresMinutes);
+        var expires = DateTime.UtcNow.AddMinutes(TokenExpiresMinutes);
         var refreshToken = _tokenGenerator.CreateRefreshToken();
         var accessToken = _tokenGenerator.WriteSecurityToken(
             _tokenGenerator.CreateJwtSecurityToken(
                 _tokenGenerator.CreateSigningCredentials(),
-                _tokenGenerator.CreateUserClaims(user), expiresMinutes));
+                _tokenGenerator.CreateUserClaims(user), TokenExpiresMinutes));
 
         return new AccessTokensResponseModel()
         {
@@ -106,14 +106,14 @@ public class LoginRequestProcessor(ITokenGenerationService _tokenGenerator, IHas
     /// </summary>
     /// <param name="expiresMinutes">Minutes until the token expires</param>
     /// <returns></returns>
-    private AccessTokensResponseModel CreateAnonymousAccessTokens(int expiresMinutes)
+    private AccessTokensResponseModel CreateAnonymousAccessTokens()
     {
-        var expires = DateTime.UtcNow.AddMinutes(expiresMinutes);
+        var expires = DateTime.UtcNow.AddMinutes(TokenExpiresMinutes);
         var refreshToken = _tokenGenerator.CreateRefreshToken();
         var accessToken = _tokenGenerator.WriteSecurityToken(
             _tokenGenerator.CreateJwtSecurityToken(
                 _tokenGenerator.CreateSigningCredentials(),
-                _tokenGenerator.CreateAnonymousClaims(), expiresMinutes));
+                _tokenGenerator.CreateAnonymousClaims(), TokenExpiresMinutes));
 
         return new AccessTokensResponseModel()
         {
