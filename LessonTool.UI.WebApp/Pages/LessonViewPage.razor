@@ -10,6 +10,6 @@
         <LessonHeader Lesson="@lesson" />
     </div>
     <div>
-        <SectionList SectionsSource="@(() => Task.FromResult(lesson.Sections))" />
+        <SectionList Sections="@lesson.Sections" />
     </div>
 </div>

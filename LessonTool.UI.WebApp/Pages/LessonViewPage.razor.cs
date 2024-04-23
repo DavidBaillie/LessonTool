@@ -27,9 +27,15 @@ namespace LessonTool.UI.WebApp.Pages
                     lesson = await lessonRepository.LoadFullLessonFromSourceAsync(id, cancellationToken);
                 }
             }
-            catch (HttpRequestException ex) 
+            catch (HttpRequestException ex)
             {
-                failureMessage = $"Failed to load lesson: {ex.StatusCode}";
+                Console.WriteLine($"Http failure! {ex}");
+                failureMessage = $"Failed to load lesson from Api: {ex.StatusCode}";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to initialize: {ex}");
+                failureMessage = $"General failure: {ex}";
             }
         }
     }

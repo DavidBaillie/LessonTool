@@ -14,12 +14,14 @@ public class LessonEndpoint : ApiServiceBase<LessonDto>, ILessonRepository
 
     }
 
+    public override Task<List<LessonDto>> GetAllAsync(CancellationToken cancellationToken = default)
+        => GetAllInDateRangeAsync(null, null, cancellationToken);
+
     public async Task<List<LessonDto>> GetAllInDateRangeAsync(DateTime? min = null, DateTime? max = null, CancellationToken cancellationToken = default)
     {
         using var client = await GetClient();
 
         var query = QueryHelpers.AddQueryString(ApiEndpointConstants.LessonsEndpoint, new Dictionary<string, string> { { "min", $"{min}" }, { "max", $"{max}" } });
-        Console.WriteLine($"Query: {client.BaseAddress}/{query}");
         var response = await client.GetAsync(query, cancellationToken);
         response.EnsureSuccessStatusCode();
 

@@ -1,5 +1,6 @@
 ﻿using LessonTool.Common.Domain.Interfaces;
 using LessonTool.UI.Infrastructure.Constants;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 using static LessonTool.Common.Domain.Utilities.HttpUtilities;
@@ -49,7 +50,7 @@ public abstract class ApiServiceBase<T> : IRepository<T> where T : class
     {
         using var client = await GetClient();
 
-        var response = await client.GetAsync(BuildQueryString(_apiEndpoint, new() { { nameof(id), id.ToString() } }), cancellationToken);
+        var response = await client.GetAsync($"{_apiEndpoint}/{id}", cancellationToken);
         response.EnsureSuccessStatusCode();
 
         return await DeserializeResponseAsync<T>(response, jsonOptions, cancellationToken);

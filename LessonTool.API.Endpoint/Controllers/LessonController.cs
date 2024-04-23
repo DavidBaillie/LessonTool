@@ -19,7 +19,7 @@ public class LessonController : ApiControllerBase<LessonDto>
     }
 
     [Authorize(Policy = PolicyNameConstants.ReaderPolicy)]
-    [HttpGet]
+    [HttpGet("")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<LessonDto>>> GetAllAsync(DateTime? min = null, DateTime? max = null, bool includeSections = false, CancellationToken cancellationToken = default)
     {

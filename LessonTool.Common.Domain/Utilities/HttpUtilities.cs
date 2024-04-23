@@ -16,6 +16,7 @@ public static class HttpUtilities
     public static async Task<T> DeserializeResponseAsync<T>(HttpResponseMessage message, JsonSerializerOptions jsonOptions, CancellationToken cancellationToken = default)
     {
         var payload = await message.Content.ReadAsStringAsync(cancellationToken);
+        Console.WriteLine($"Payload: {payload}");
         return JsonSerializer.Deserialize<T>(payload, jsonOptions);
     }
 
@@ -24,6 +25,18 @@ public static class HttpUtilities
         if (queryParams == null || queryParams.Count == 0)
             return new Uri(baseEndpoint);
 
-        return new Uri(QueryHelpers.AddQueryString(baseEndpoint, queryParams));
+        string uri = QueryHelpers.AddQueryString(baseEndpoint, queryParams);
+
+        try
+        {
+            var built = new Uri(uri);
+            Console.WriteLine(built.ToString());
+            return built;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Cannot build URI from [{uri}]");
+            throw;
+        }
     }
 }
