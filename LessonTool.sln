@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessonTool.API.Domain", "Le
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessonTool.UI.Application", "LessonTool.UI.Application\LessonTool.UI.Application.csproj", "{0F70CC1B-7600-41AA-A106-9B84A4531603}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LessonTool.API.Application", "LessonTool.API.Application\LessonTool.API.Application.csproj", "{FDED88CF-6D0F-454A-AEF4-47132F31A620}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessonTool.API.Application", "LessonTool.API.Application\LessonTool.API.Application.csproj", "{FDED88CF-6D0F-454A-AEF4-47132F31A620}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

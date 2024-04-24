@@ -4,6 +4,7 @@ using LessonTool.Common.Domain.Models.Authentication;
 using LessonTool.UI.Application.Exceptions;
 using LessonTool.UI.Application.Interfaces;
 using LessonTool.UI.Infrastructure.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace LessonTool.UI.Infrastructure.Authentication;
 
@@ -14,17 +15,36 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
     private const string rememberSessionKey = "rs";
 
     private AccessTokensResponseModel tokens;
+    private Task loadingTask = null;
 
-    //public string AccessToken => tokens?.AccessToken ?? throw new ApplicationException("No Access token available!");
-    public string AccessToken
+    public async Task<string> GetAccessTokenAsync(CancellationToken cancellationToken)
     {
-        get
+        //There is a loading task already, await it
+        if (loadingTask != null)
         {
-            if (tokens is null) throw new ApplicationException($"No tokens are available to the web page!");
-            if (string.IsNullOrEmpty(tokens.AccessToken)) throw new ApplicationException($"Tokens found, missing access token!");
-
-            return tokens.AccessToken;
+            Console.WriteLine($"Task already running, waiting for it");
+            await loadingTask;
+            return tokens?.AccessToken ?? throw new ApplicationException($"No access token available to the project!");
         }
+
+        Console.WriteLine($"First one here, grabbing tokens");
+
+        //Create a task that can be awaited to generate a token from
+        var taskSource = new TaskCompletionSource();
+        loadingTask = taskSource.Task;
+
+        //Setup the local tokens
+        await InitializeAuthenticationStateAsync(cancellationToken);
+
+        //Done work, return
+        taskSource.SetResult();
+        return tokens.AccessToken;
+    }
+
+    public async Task<JwtSecurityToken> GetSecuritytokenAsync(CancellationToken cancellationToken)
+    {
+        var currentToken = await GetAccessTokenAsync(cancellationToken);
+        return new JwtSecurityToken(currentToken);
     }
 
     /// <summary>
@@ -32,7 +52,7 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
     /// </summary>
     /// <param name="cancellationToken">Process tokens</param>
     /// <returns></returns>
-    public async Task InitializeAuthenticationStateAsync(CancellationToken cancellationToken)
+    private async Task InitializeAuthenticationStateAsync(CancellationToken cancellationToken)
     {
         try
         {
@@ -120,16 +140,23 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
         try
         {
             tokens = await _authenticationEndpoint.LoginAsAnonymousUserAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
 
+        try
+        {
             await _localStorage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
             await _localStorage.TryDeleteValueAsync(rememberSessionKey, cancellationToken);
 
             await _localStorage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
             await _localStorage.TrySaveValueAsync(rememberSessionKey, true.ToString(), cancellationToken);
         }
-        catch (Exception ex)
+        catch
         {
-            return false;
+            Console.WriteLine($"Aquired token but failed to save locally!");
         }
 
         return true;

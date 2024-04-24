@@ -2,9 +2,9 @@
 {
     public interface IAuthenticationStateHandler
     {
-        string AccessToken { get; }
+        //string AccessToken { get; }
 
-        Task InitializeAuthenticationStateAsync(CancellationToken cancellationToken);
+        Task<string> GetAccessTokenAsync(CancellationToken cancellationToken);
         Task<bool> TryLoginUsingCredentialsAsync(string username, string password, bool rememberSession, CancellationToken cancellationToken);
         Task<bool> TryLogout(CancellationToken cancellationToken);
     }

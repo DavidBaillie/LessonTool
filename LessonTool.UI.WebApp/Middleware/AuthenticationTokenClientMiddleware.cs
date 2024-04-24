@@ -10,7 +10,7 @@ public class AuthenticationTokenClientMiddleware(IAuthenticationStateHandler _au
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        var token = _authenticationStateHandler.AccessToken;
+        var token = await _authenticationStateHandler.GetAccessTokenAsync(cancellationToken);
 
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 

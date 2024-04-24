@@ -1,7 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject LessonTool.UI.Infrastructure.Interfaces.IAuthenticationStateHandler authHandler
 
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">
@@ -15,44 +14,21 @@
                 <a class="nav-link active" aria-current="page" href="/lessons">
                     Lessons
                 </a>
-                <a class="nav-link" href="#">
-                    Login
-                </a>
+                <div>
+                    @if (string.IsNullOrEmpty(username))
+                    {
+                        <a class="nav-link" href="/login">
+                            Login
+                        </a>
+                    }
+                    else
+                    {
+                        <p>@username</p>
+                    }
+                </div>
             </div>
         </div>
     </div>
 </nav>
 
-@if (hasDied)
-{
-    <p>She's dead captain!</p>    
-} 
-else if(hasInitialized)
-{
-    @Body
-}
-else
-{
-    <p>Loading</p>
-}
-
-@code {
-    private bool hasInitialized = false;
-
-    private bool hasDied = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            await base.OnInitializedAsync();
-            await authHandler.InitializeAuthenticationStateAsync(CancellationToken.None);
-
-            hasInitialized = true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-        }
-    }
-}
+@Body
