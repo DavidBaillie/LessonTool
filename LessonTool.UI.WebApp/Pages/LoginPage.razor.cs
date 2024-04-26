@@ -31,10 +31,11 @@ public partial class LoginPage
             password = "";
 
             localTokenUsername = await GetUsernameFromAccessTokenAsync();
+            Console.WriteLine($"Logged in as {localTokenUsername}");
         }
         else
         {
-
+            Console.WriteLine($"Failed to login!");
         }
     }
 

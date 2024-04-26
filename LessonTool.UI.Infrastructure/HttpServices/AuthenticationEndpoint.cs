@@ -16,7 +16,7 @@ public class AuthenticationEndpoint(IHttpClientFactory _clientFactory, IHashServ
 
     public async Task<AccessTokensResponseModel> LoginAsAnonymousUserAsync(CancellationToken cancellationToken)
     {
-        using var client = _clientFactory.CreateClient(ApiEndpointConstants.CommonApiClientName);
+        using var client = _clientFactory.CreateClient(ApiEndpointConstants.AuthenticationApiClientName);
         var response = await client.PostAsync($"{ApiEndpointConstants.AuthenticationEndpoint}/login", 
             GeneratePayload(new LoginRequestModel()
             {
@@ -34,14 +34,17 @@ public class AuthenticationEndpoint(IHttpClientFactory _clientFactory, IHashServ
 
     public async Task<AccessTokensResponseModel> LoginAsUserAsync(string username, string password, CancellationToken cancellationToken)
     {
-        using var client = _clientFactory.CreateClient(ApiEndpointConstants.CommonApiClientName);
-        var response = await client.PostAsync($"{ApiEndpointConstants.AuthenticationEndpoint}/login", 
-            GeneratePayload(new LoginRequestModel()
-            {
-                Username = username,
-                HashedPassword = _hashService.HashString(password),
-                RequestToken = TokenConstants.AuthenticationRequestToken
-            }, jsonOptions));
+        using var client = _clientFactory.CreateClient(ApiEndpointConstants.AuthenticationApiClientName);
+        Console.WriteLine($"Trying to login as [{username}] [{password}]");
+        var payload = GeneratePayload(new LoginRequestModel()
+        {
+            Username = username,
+            HashedPassword = _hashService.HashString(password),
+            RequestToken = TokenConstants.AuthenticationRequestToken
+        }, jsonOptions);
+
+        var response = await client.PostAsync($"{ApiEndpointConstants.AuthenticationEndpoint}/login", payload);
+            
 
         if (!response.IsSuccessStatusCode)
             throw new BadHttpResponseException(response);
@@ -52,7 +55,7 @@ public class AuthenticationEndpoint(IHttpClientFactory _clientFactory, IHashServ
 
     public async Task<AccessTokensResponseModel> RefreshSessionAsync(RefreshTokensRequestModel currentTokens, CancellationToken cancellationToken)
     {
-        using var client = _clientFactory.CreateClient(ApiEndpointConstants.CommonApiClientName);
+        using var client = _clientFactory.CreateClient(ApiEndpointConstants.AuthenticationApiClientName);
         var response = await client.PutAsync($"{ApiEndpointConstants.AuthenticationEndpoint}/refresh",
             GeneratePayload(new RefreshTokensRequestModel()
             {

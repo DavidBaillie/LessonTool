@@ -8,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace LessonTool.UI.Infrastructure.Authentication;
 
-public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationEndpoint, IHashService _hashing, IBrowserLocalStorage _localStorage) 
+public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationEndpoint, IBrowserLocalStorage _localStorage, IBrowserSessionStorage _sessionStorage) 
     : IAuthenticationStateHandler
 {
     private const string accessTokenKey = "at";
@@ -17,12 +17,16 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
     private AccessTokensResponseModel tokens;
     private Task loadingTask = null;
 
+    private IPersistentStorage persistentStorage = _localStorage;
+
+    //public event Func<Task> OnLoginStateChangedAsync;
+    public event Action OnLoginStateChanged;
+
     public async Task<string> GetAccessTokenAsync(CancellationToken cancellationToken)
     {
         //There is a loading task already, await it
         if (loadingTask != null)
         {
-            Console.WriteLine($"Task already running, waiting for it");
             await loadingTask;
             return tokens?.AccessToken ?? throw new ApplicationException($"No access token available to the project!");
         }
@@ -33,8 +37,15 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
         var taskSource = new TaskCompletionSource();
         loadingTask = taskSource.Task;
 
-        //Setup the local tokens
-        await InitializeAuthenticationStateAsync(cancellationToken);
+        try
+        {
+            //Setup the local tokens
+            await InitializeAuthenticationStateAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to initialize state!");
+        }
 
         //Done work, return
         taskSource.SetResult();
@@ -58,33 +69,42 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
         {
             //Grab the remeber state and clear token if needed
             var rememberSessionValue = await _localStorage.GetValueOrDefaultAsync(rememberSessionKey, cancellationToken);
+
+            //No value or set to false
             if (string.IsNullOrEmpty(rememberSessionValue) || rememberSessionValue.Equals("false", StringComparison.InvariantCultureIgnoreCase))
             {
-                Console.WriteLine($"Should not remeber session - deleting key");
+                Console.WriteLine($"Remember session FALSE");
+                //Delete any key in the local storage
                 await _localStorage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
+                //Switch key storage to use session only
+                persistentStorage = _sessionStorage;
             }
 
-            var accessToken = await _localStorage.GetValueOrDefaultAsync(accessTokenKey, cancellationToken);
+            var accessToken = await persistentStorage.GetValueOrDefaultAsync(accessTokenKey, cancellationToken);
+            Console.WriteLine($"Loaded token {accessToken}");
 
             //No token saved
             if (string.IsNullOrEmpty(accessToken))
             {
-                Console.WriteLine($"No local access token, using anon");
+                Console.WriteLine($"No local token, getting new anonymous one");
                 tokens = await _authenticationEndpoint.LoginAsAnonymousUserAsync(cancellationToken);
 
                 await _localStorage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
                 await _localStorage.TrySaveValueAsync(rememberSessionKey, true.ToString(), cancellationToken);
+
+                await _sessionStorage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
             }
             //Existing token
             else
             {
                 tokens = accessToken.ParseToAccessTokens();
+                Console.WriteLine($"Found local tokens: {tokens.AccessToken}");
 
                 //Try to refresh current tokens
                 try
                 {
                     tokens = await _authenticationEndpoint.RefreshSessionAsync(tokens.ToRefreshTokensModel(), cancellationToken);
-                    Console.WriteLine("Token refreshed successfully");
+                    Console.WriteLine($"Correctly refreshed tokens");
                 }
                 catch (BadHttpResponseException ex)
                 {
@@ -101,8 +121,9 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
                     }
                 }
 
-                await _localStorage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
-                await _localStorage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
+                Console.WriteLine($"Tokens good, updating local storage");
+                await persistentStorage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
+                await persistentStorage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
             }
         }
         catch (Exception e)
@@ -123,15 +144,24 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
     {
         try
         {
-            tokens = await _authenticationEndpoint.LoginAsUserAsync(username, _hashing.HashString(password), cancellationToken);
-            await _localStorage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
+            tokens = await _authenticationEndpoint.LoginAsUserAsync(username, password, cancellationToken);
+
+            //If remembering session, try to clear session and switch provider back to local storage
+            persistentStorage = rememberSession ? _localStorage : _sessionStorage;
+
+            await _sessionStorage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
+            await _sessionStorage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
+
+            await persistentStorage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
             await _localStorage.TrySaveValueAsync(rememberSessionKey, rememberSession.ToString(), cancellationToken);
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"Failed to login: {ex}");
             return false;
         }
 
+        OnLoginStateChanged?.Invoke();
         return true;
     }
 
@@ -146,19 +176,15 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
             return false;
         }
 
-        try
-        {
-            await _localStorage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
-            await _localStorage.TryDeleteValueAsync(rememberSessionKey, cancellationToken);
+        persistentStorage = _localStorage;
 
-            await _localStorage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
-            await _localStorage.TrySaveValueAsync(rememberSessionKey, true.ToString(), cancellationToken);
-        }
-        catch
-        {
-            Console.WriteLine($"Aquired token but failed to save locally!");
-        }
+        await _sessionStorage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
+        await _localStorage.TryDeleteValueAsync(accessTokenKey, cancellationToken);
 
+        await persistentStorage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
+        await _localStorage.TrySaveValueAsync(rememberSessionKey, true.ToString(), cancellationToken);
+
+        OnLoginStateChanged?.Invoke();
         return true;
     }
 }
