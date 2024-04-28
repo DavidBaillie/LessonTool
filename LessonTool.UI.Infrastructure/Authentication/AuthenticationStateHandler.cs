@@ -51,7 +51,7 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
         return tokens.AccessToken;
     }
 
-    public async Task<JwtSecurityToken> GetSecuritytokenAsync(CancellationToken cancellationToken)
+    public async Task<JwtSecurityToken> GetSecurityTokenAsync(CancellationToken cancellationToken)
     {
         var currentToken = await GetAccessTokenAsync(cancellationToken);
         return new JwtSecurityToken(currentToken);

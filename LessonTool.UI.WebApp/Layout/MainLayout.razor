@@ -11,7 +11,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse d-flex flex-row justify-content-between w-100 me-3" id="navbarNavAltMarkup">
-            <div>
+            <div class="d-flex flex-row">
                 <div class="navbar-nav">
                     <a class="nav-link active" aria-current="page" href="/lessons">
                         Lessons
@@ -28,27 +28,28 @@
                 }
             </div>
 
-
-            <div style="color: white">
-                @if (!string.IsNullOrEmpty(username) && username != "Anonymous")
-                {
-                    <p class="mb-0">
-                        @username
-                    </p>
-                }
-            </div>
-            <div style="color: white">
+            <div>
                 @if (string.IsNullOrEmpty(username) || username == "Anonymous")
                 {
-                    <a class="nav-link" href="/login">
+                    <a class="nav-link" style="color: white" href="/login">
                         Login
                     </a>
                 }
                 else
                 {
-                    <button class="nav-link" @onclick="@(async () => await LogoutAsync())">
-                        Logout
-                    </button>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="dropdown-toggle btn-lg" data-bs-toggle="dropdown" aria-expanded="false" style="background: none; border: none; color: white;">
+                            @username
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" style="color: black" @onclick="@(async () => await LogoutAsync())">
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
                 }
             </div>
         </div>

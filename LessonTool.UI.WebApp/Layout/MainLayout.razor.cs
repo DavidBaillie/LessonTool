@@ -10,6 +10,9 @@ public partial class MainLayout : IDisposable
     [Inject]
     private IAuthenticationStateHandler authenticationHandler {  get; set; }
 
+    [Inject]
+    private NavigationManager navigationManager { get; set; }
+
     private JwtSecurityToken userToken;
     private string username = string.Empty;
 
@@ -28,7 +31,7 @@ public partial class MainLayout : IDisposable
 
     private async Task ReloadUserDataFromAccesstoken()
     {
-        userToken = await authenticationHandler.GetSecuritytokenAsync(CancellationToken.None);
+        userToken = await authenticationHandler.GetSecurityTokenAsync(CancellationToken.None);
         username = userToken.GetUsernameClaim();
     }
 

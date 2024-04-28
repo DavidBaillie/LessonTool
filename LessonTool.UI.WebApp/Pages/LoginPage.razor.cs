@@ -1,4 +1,5 @@
 ﻿using LessonTool.UI.Infrastructure.Interfaces;
+using LessonTool.UI.WebApp.Extensions;
 using Microsoft.AspNetCore.Components;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,17 +11,20 @@ public partial class LoginPage
     [Inject]
     private IAuthenticationStateHandler authenticationStateHandler {  get; set; }
 
+    [Inject]
+    private NavigationManager navigationManager { get; set; }
+
     private string localTokenUsername = "Anonymous";
 
     private string username;
     private string password;
-    private bool rememberMe;
+    private bool rememberMe = true;
 
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        localTokenUsername = await GetUsernameFromAccessTokenAsync();
+        localTokenUsername = (await authenticationStateHandler.GetSecurityTokenAsync(CancellationToken.None)).GetUsernameClaim();
     }
 
     private async Task OnLoginButtonPressed()
@@ -30,8 +34,7 @@ public partial class LoginPage
             username = "";
             password = "";
 
-            localTokenUsername = await GetUsernameFromAccessTokenAsync();
-            Console.WriteLine($"Logged in as {localTokenUsername}");
+            navigationManager.NavigateTo("/");
         }
         else
         {

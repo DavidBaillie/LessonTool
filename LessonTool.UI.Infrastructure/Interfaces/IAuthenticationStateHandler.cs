@@ -9,7 +9,7 @@ namespace LessonTool.UI.Infrastructure.Interfaces
         event Func<Task> OnLoginStateChangedAsync;
 
         Task<string> GetAccessTokenAsync(CancellationToken cancellationToken);
-        Task<JwtSecurityToken> GetSecuritytokenAsync(CancellationToken cancellationToken);
+        Task<JwtSecurityToken> GetSecurityTokenAsync(CancellationToken cancellationToken);
         Task<bool> TryLoginUsingCredentialsAsync(string username, string password, bool rememberSession, CancellationToken cancellationToken);
         Task<bool> TryLogoutAsync(CancellationToken cancellationToken);
     }
