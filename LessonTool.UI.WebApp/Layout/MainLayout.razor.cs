@@ -1,7 +1,7 @@
 ﻿using LessonTool.UI.Infrastructure.Interfaces;
+using LessonTool.UI.WebApp.Extensions;
 using Microsoft.AspNetCore.Components;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace LessonTool.UI.WebApp.Layout;
 
@@ -10,38 +10,30 @@ public partial class MainLayout : IDisposable
     [Inject]
     private IAuthenticationStateHandler authenticationHandler {  get; set; }
 
+    private JwtSecurityToken userToken;
     private string username = string.Empty;
-
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        authenticationHandler.OnLoginStateChanged += OnLoginStateChanged;
+        await ReloadUserDataFromAccesstoken();
 
-        try
-        {
-            await GetUsernameFromAccessTokenAsync();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-        }
+        authenticationHandler.OnLoginStateChangedAsync += ReloadUserDataFromAccesstoken;
     }
 
     public void Dispose()
     {
-        authenticationHandler.OnLoginStateChanged -= OnLoginStateChanged;
+        authenticationHandler.OnLoginStateChangedAsync -= ReloadUserDataFromAccesstoken;
     }
 
-    private void OnLoginStateChanged() => GetUsernameFromAccessTokenAsync().GetAwaiter().GetResult();
-    private async Task GetUsernameFromAccessTokenAsync()
+    private async Task ReloadUserDataFromAccesstoken()
     {
-        var token = await authenticationHandler.GetAccessTokenAsync(CancellationToken.None);
+        userToken = await authenticationHandler.GetSecuritytokenAsync(CancellationToken.None);
+        username = userToken.GetUsernameClaim();
+    }
 
-        var name = new JwtSecurityToken(token).Claims.First(x => x.Type == ClaimTypes.Name).Value;
-        if (name != "Anonymous")
-        {
-            username = name;
-        }
+    private async Task LogoutAsync()
+    {
+        await authenticationHandler.TryLogoutAsync(CancellationToken.None);
     }
 }

@@ -19,8 +19,7 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
 
     private IPersistentStorage persistentStorage = _localStorage;
 
-    //public event Func<Task> OnLoginStateChangedAsync;
-    public event Action OnLoginStateChanged;
+    public event Func<Task> OnLoginStateChangedAsync;
 
     public async Task<string> GetAccessTokenAsync(CancellationToken cancellationToken)
     {
@@ -161,11 +160,11 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
             return false;
         }
 
-        OnLoginStateChanged?.Invoke();
+        await (OnLoginStateChangedAsync?.Invoke() ?? Task.CompletedTask);
         return true;
     }
 
-    public async Task<bool> TryLogout(CancellationToken cancellationToken)
+    public async Task<bool> TryLogoutAsync(CancellationToken cancellationToken)
     {
         try
         {
@@ -184,7 +183,7 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
         await persistentStorage.TrySaveValueAsync(accessTokenKey, tokens.TokensToString(), cancellationToken);
         await _localStorage.TrySaveValueAsync(rememberSessionKey, true.ToString(), cancellationToken);
 
-        OnLoginStateChanged?.Invoke();
+        await (OnLoginStateChangedAsync?.Invoke() ?? Task.CompletedTask);
         return true;
     }
 }

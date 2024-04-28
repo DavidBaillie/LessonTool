@@ -5,12 +5,11 @@ using LessonTool.API.Domain.Interfaces;
 using LessonTool.API.Infrastructure.EntityFramework;
 using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.API.Infrastructure.Repositories;
+using LessonTool.Common.Domain.Constants;
 using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Services;
-using LessonTool.UI.Infrastructure.HttpServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 
 namespace LessonTool.API.Endpoint;

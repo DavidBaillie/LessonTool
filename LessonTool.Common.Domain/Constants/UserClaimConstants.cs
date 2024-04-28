@@ -1,4 +1,4 @@
-﻿namespace LessonTool.API.Authentication.Constants;
+﻿namespace LessonTool.Common.Domain.Constants;
 
 public static class UserClaimConstants
 {

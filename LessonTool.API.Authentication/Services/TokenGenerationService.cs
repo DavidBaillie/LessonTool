@@ -1,6 +1,6 @@
-﻿using LessonTool.API.Authentication.Constants;
-using LessonTool.API.Authentication.Interfaces;
+﻿using LessonTool.API.Authentication.Interfaces;
 using LessonTool.API.Authentication.Models;
+using LessonTool.Common.Domain.Constants;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

@@ -1,5 +1,5 @@
-﻿using LessonTool.API.Authentication.Constants;
-using LessonTool.API.Infrastructure.Models;
+﻿using LessonTool.API.Infrastructure.Models;
+using LessonTool.Common.Domain.Constants;
 using Microsoft.EntityFrameworkCore;
 
 namespace LessonTool.API.Infrastructure.EntityFramework;
