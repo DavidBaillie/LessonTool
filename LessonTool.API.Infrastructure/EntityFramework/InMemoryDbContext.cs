@@ -50,7 +50,7 @@ public class InMemoryDbContext : CosmosDbContext
                 Name = "Lorem ipsum dolor sit",
                 Description = "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa",
                 VisibleDate = DateTime.MinValue.AddDays(1),
-                PlannedDate = DateTime.UtcNow,
+                PlannedDate = DateTime.UtcNow.AddDays(-1),
                 Type = "Lesson"
             },
             new CosmosLesson()
@@ -58,8 +58,8 @@ public class InMemoryDbContext : CosmosDbContext
                 Id = "7023ece4-547d-4c44-95f1-1cc26782a085",
                 Name = "Quis nostrud exercitation ullamco",
                 Description = "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa",
-                VisibleDate = DateTime.MinValue.AddDays(1),
-                PlannedDate = DateTime.UtcNow.AddDays(1),
+                VisibleDate = DateTime.UtcNow.AddDays(1),
+                PlannedDate = DateTime.UtcNow.AddDays(2),
                 Type = "Lesson"
             });
 
