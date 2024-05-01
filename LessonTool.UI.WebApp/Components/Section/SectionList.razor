@@ -1,10 +1,11 @@
 ﻿@inherits BaseComponent<SectionList>
 
 <div class="d-flex flex-column mx-3">
-    @foreach(var item in Sections)
+    @for(int i = 0; i < Sections.Count; i++)
     {
+        int index = i;
         <div class="mb-3">
-            <SectionItem Section="@item" />
+            <SectionItem Section="@Sections[index]" SectionIndex="@index" />
         </div>
     }
 </div>

@@ -5,6 +5,9 @@ namespace LessonTool.UI.WebApp.Components.Section;
 
 public partial class SectionItem
 {
-    [Parameter]
+    [Parameter, EditorRequired]
     public SectionDto Section { get; set; }
+
+    [Parameter]
+    public int SectionIndex { get; set; } = -1;
 }
