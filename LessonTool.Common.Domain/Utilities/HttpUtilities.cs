@@ -16,7 +16,6 @@ public static class HttpUtilities
     public static async Task<T> DeserializeResponseAsync<T>(HttpResponseMessage message, JsonSerializerOptions jsonOptions, CancellationToken cancellationToken = default)
     {
         var payload = await message.Content.ReadAsStringAsync(cancellationToken);
-        Console.WriteLine($"Payload: {payload}");
         return JsonSerializer.Deserialize<T>(payload, jsonOptions);
     }
 

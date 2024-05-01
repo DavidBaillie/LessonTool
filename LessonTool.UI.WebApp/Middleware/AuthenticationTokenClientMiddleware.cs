@@ -14,8 +14,6 @@ public class AuthenticationTokenClientMiddleware(IAuthenticationStateHandler _au
 
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        Console.WriteLine($"Added token to request: {token}");
-
         return await base.SendAsync(request, cancellationToken);
     }
 }
