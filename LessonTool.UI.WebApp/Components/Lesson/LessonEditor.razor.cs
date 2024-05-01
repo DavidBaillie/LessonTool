@@ -4,11 +4,16 @@ using LessonTool.UI.WebApp.FormModels;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
 using LessonTool.UI.WebApp.Extensions;
+using LessonTool.UI.Infrastructure.Interfaces;
+using LessonTool.Common.Domain.Constants;
 
 namespace LessonTool.UI.WebApp.Components.Lesson
 {
     public partial class LessonEditor
     {
+        [Inject]
+        private IAuthenticationStateHandler authenticationStateHandler { get; set; }
+
         [Parameter]
         public Guid LessonId { get; set; }
 
@@ -19,11 +24,15 @@ namespace LessonTool.UI.WebApp.Components.Lesson
         private EditContext editContext = new(new object());
 
         private bool lessonFailedToLoad = false;
+        private bool userIsAllowedToEdit = false;
         private string failureMessage = string.Empty;
 
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
+
+            userIsAllowedToEdit = (await authenticationStateHandler.GetSecurityTokenAsync(cancellationToken))
+                .TokenHasAnyClaims([UserClaimConstants.Admin,  UserClaimConstants.Teacher]);
 
             try
             {
@@ -58,10 +67,17 @@ namespace LessonTool.UI.WebApp.Components.Lesson
 
             LessonDto dto = lesson.ToLessonDto(lesson.Sections);
 
-            if (lesson.Id == Guid.Empty)
-                await LessonRepository.CreateAsync(dto, cancellationToken);
-            else
-                await LessonRepository.UpdateAsync(dto, cancellationToken);
+            try
+            {
+                if (lesson.Id == Guid.Empty)
+                    await LessonRepository.CreateAsync(dto, cancellationToken);
+                else
+                    await LessonRepository.UpdateAsync(dto, cancellationToken);
+            }
+            catch (HttpRequestException ex)
+            {
+
+            }
         }
     }
 }
