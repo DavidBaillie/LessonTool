@@ -20,4 +20,10 @@ public static class JwtSecurityTokenExtensions
             .Select(x => x.Value)
             .ToList();
     }
+
+    public static bool TokenHasAnyClaims(this JwtSecurityToken token, IEnumerable<string> claims)
+    {
+        var tokenClaims = token.GetRoleClaims();
+        return claims.Any(x => tokenClaims.Contains(x));
+    }
 }

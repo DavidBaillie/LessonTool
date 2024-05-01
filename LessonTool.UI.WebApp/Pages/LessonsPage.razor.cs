@@ -3,6 +3,7 @@ using LessonTool.Common.Domain.Models;
 using LessonTool.UI.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Components;
 using LessonTool.UI.WebApp.Extensions;
+using LessonTool.Common.Domain.Constants;
 
 namespace LessonTool.UI.WebApp.Pages;
 
@@ -24,8 +25,10 @@ public partial class LessonsPage
         {
             lessons = await lessonRepository.GetAllInDateRangeAsync(cancellationToken: cancellationToken);
 
-            var username = (await authenticationStateHandler.GetSecurityTokenAsync(cancellationToken)).GetUsernameClaim();
-            if (username == "Anonymous")
+            var isManagingUser = (await authenticationStateHandler.GetSecurityTokenAsync(cancellationToken))
+                .TokenHasAnyClaims([UserClaimConstants.Admin, UserClaimConstants.Teacher, UserClaimConstants.Parent]);
+            
+            if (!isManagingUser)
                 lessons = lessons.Where(x => x.VisibleDate < DateTime.UtcNow).ToList();
         }
         catch (Exception ex)

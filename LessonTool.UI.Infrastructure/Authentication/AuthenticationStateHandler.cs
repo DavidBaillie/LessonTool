@@ -21,7 +21,7 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
 
     public event Func<Task> OnLoginStateChangedAsync;
 
-    public async Task<string> GetAccessTokenAsync(CancellationToken cancellationToken)
+    public async Task<string> GetAccessTokenAsync(CancellationToken cancellationToken = default)
     {
         //There is a loading task already, await it
         if (loadingTask != null)
@@ -51,7 +51,7 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
         return tokens.AccessToken;
     }
 
-    public async Task<JwtSecurityToken> GetSecurityTokenAsync(CancellationToken cancellationToken)
+    public async Task<JwtSecurityToken> GetSecurityTokenAsync(CancellationToken cancellationToken = default)
     {
         var currentToken = await GetAccessTokenAsync(cancellationToken);
         return new JwtSecurityToken(currentToken);
@@ -62,7 +62,7 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
     /// </summary>
     /// <param name="cancellationToken">Process tokens</param>
     /// <returns></returns>
-    private async Task InitializeAuthenticationStateAsync(CancellationToken cancellationToken)
+    private async Task InitializeAuthenticationStateAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -139,7 +139,7 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
     /// <param name="rememberSession">If the session should be saved for next time page opens</param>
     /// <param name="cancellationToken">Process token</param>
     /// <returns>If the login was successful</returns>
-    public async Task<bool> TryLoginUsingCredentialsAsync(string username, string password, bool rememberSession, CancellationToken cancellationToken)
+    public async Task<bool> TryLoginUsingCredentialsAsync(string username, string password, bool rememberSession, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -164,7 +164,7 @@ public class AuthenticationStateHandler(IAuthenticationEndpoint _authenticationE
         return true;
     }
 
-    public async Task<bool> TryLogoutAsync(CancellationToken cancellationToken)
+    public async Task<bool> TryLogoutAsync(CancellationToken cancellationToken = default)
     {
         try
         {
