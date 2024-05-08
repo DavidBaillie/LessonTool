@@ -20,6 +20,9 @@ namespace LessonTool.UI.WebApp.Components.Lesson
         [Parameter]
         public ILessonRepository LessonRepository { get; set; }
 
+        [Parameter]
+        public ISectionRepository SectionRepository { get; set; }
+
         private LessonFormModel lesson = new();
         private EditContext editContext = new(new object());
 
@@ -36,9 +39,19 @@ namespace LessonTool.UI.WebApp.Components.Lesson
 
             try
             {
-                var dto = await LessonRepository.GetAsync(LessonId, cancellationToken);
-
-                lesson = dto.ToLessonFormModel(dto.Sections);
+                if (LessonId == Guid.Empty)
+                {
+                    lesson = new()
+                    {
+                        VisibleDate = DateTime.UtcNow,
+                        PlannedDate = DateTime.UtcNow,
+                    };
+                }
+                else
+                {
+                    var dto = await LessonRepository.GetAsync(LessonId, cancellationToken);
+                    lesson = dto.ToLessonFormModel(dto.Sections);
+                }
                 editContext = new(lesson);
             }
             catch (HttpRequestException ex)
@@ -70,13 +83,25 @@ namespace LessonTool.UI.WebApp.Components.Lesson
             try
             {
                 if (lesson.Id == Guid.Empty)
+                {
                     await LessonRepository.CreateAsync(dto, cancellationToken);
+
+                    var saveSectionTasks = dto.Sections.Select(x => SectionRepository.CreateAsync(x, cancellationToken));
+                    await Task.WhenAll(saveSectionTasks);
+                }
                 else
+                {
                     await LessonRepository.UpdateAsync(dto, cancellationToken);
+
+                    var saveSectionTasks = dto.Sections.Select(x => SectionRepository.UpdateAsync(x, cancellationToken));
+                    await Task.WhenAll(saveSectionTasks);
+                }
+
+                navigationManager.NavigateTo("/lessons");
             }
             catch (HttpRequestException ex)
             {
-
+                Console.WriteLine($"Failed to save lesson");
             }
         }
     }

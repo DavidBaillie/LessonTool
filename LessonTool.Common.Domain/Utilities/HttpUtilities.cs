@@ -32,7 +32,7 @@ public static class HttpUtilities
             Console.WriteLine(built.ToString());
             return built;
         }
-        catch (Exception ex)
+        catch
         {
             Console.WriteLine($"Cannot build URI from [{uri}]");
             throw;

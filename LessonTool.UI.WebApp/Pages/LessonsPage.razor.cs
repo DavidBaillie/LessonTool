@@ -16,6 +16,7 @@ public partial class LessonsPage
     private IAuthenticationStateHandler authenticationStateHandler { get; set; }
 
     private List<LessonDto> lessons = new();
+    private bool isManagingUser = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -25,8 +26,8 @@ public partial class LessonsPage
         {
             lessons = await lessonRepository.GetAllInDateRangeAsync(cancellationToken: cancellationToken);
 
-            var isManagingUser = (await authenticationStateHandler.GetSecurityTokenAsync(cancellationToken))
-                .TokenHasAnyClaims([UserClaimConstants.Admin, UserClaimConstants.Teacher, UserClaimConstants.Parent]);
+            isManagingUser = (await authenticationStateHandler.GetSecurityTokenAsync(cancellationToken))
+                .TokenHasAnyClaims([UserClaimConstants.Admin, UserClaimConstants.Teacher]);
             
             if (!isManagingUser)
                 lessons = lessons.Where(x => x.VisibleDate < DateTime.UtcNow).ToList();

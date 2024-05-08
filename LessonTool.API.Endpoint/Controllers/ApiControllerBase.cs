@@ -39,8 +39,8 @@ public abstract class ApiControllerBase<T> : ControllerBase where T : EntityDtoB
     [ProducesResponseType(StatusCodes.Status200OK)]
     public virtual async Task<ActionResult> PutAsync([FromBody] T inboundEntity, CancellationToken cancellationToken)
     {
-        await _repository.UpdateAsync(inboundEntity, cancellationToken);
-        return Ok();
+        var entity = await _repository.UpdateAsync(inboundEntity, cancellationToken);
+        return Ok(entity);
     }
 
     [Authorize(Policy = PolicyNameConstants.TeacherPolicy)]
