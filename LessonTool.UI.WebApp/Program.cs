@@ -25,7 +25,8 @@ namespace LessonTool.UI.WebApp
             builder.Services
                 .AddHttpClient(ApiEndpointConstants.CommonApiClientName, options =>
                     {
-                        options.BaseAddress = new Uri("https://localhost:44360");
+                        //options.BaseAddress = new Uri("https://localhost:44360");
+                        options.BaseAddress = new Uri("https://yg-api.azurewebsites.net/");
                     })
                 .AddHttpMessageHandler<AuthenticationTokenClientMiddleware>();
 
@@ -33,7 +34,8 @@ namespace LessonTool.UI.WebApp
             builder.Services
                 .AddHttpClient(ApiEndpointConstants.AuthenticationApiClientName, options =>
                     {
-                        options.BaseAddress = new Uri("https://localhost:44360");
+                        //options.BaseAddress = new Uri("https://localhost:44360");
+                        options.BaseAddress = new Uri("https://yg-api.azurewebsites.net/");
                     });
 
 
