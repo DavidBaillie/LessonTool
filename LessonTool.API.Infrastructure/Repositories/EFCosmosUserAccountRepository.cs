@@ -13,7 +13,7 @@ public class EFCosmosUserAccountRepository(CosmosDbContext _context) : IUserAcco
     public async Task<UserAccount> GetAccountByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
         var account = await _context.UserAccounts.FirstOrDefaultAsync(x => x.Username == username);
-        return account.ToUserAccount();
+        return account?.ToUserAccount();
     }
 
     public async Task<UserAccount> CreateAsync(UserAccount entity, CancellationToken cancellationToken = default)
@@ -24,7 +24,7 @@ public class EFCosmosUserAccountRepository(CosmosDbContext _context) : IUserAcco
         var entry = await _context.UserAccounts.AddAsync(account, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return entry.Entity.ToUserAccount();
+        return entry?.Entity?.ToUserAccount();
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
@@ -41,7 +41,7 @@ public class EFCosmosUserAccountRepository(CosmosDbContext _context) : IUserAcco
     public async Task<UserAccount> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var account = await _context.UserAccounts.FirstOrDefaultAsync(x => x.Id == id.ToString());
-        return account.ToUserAccount();
+        return account?.ToUserAccount();
     }
 
     public async Task<UserAccount> UpdateAsync(UserAccount entity, CancellationToken cancellationToken = default)
@@ -52,6 +52,6 @@ public class EFCosmosUserAccountRepository(CosmosDbContext _context) : IUserAcco
         var entry = _context.UserAccounts.Update(entity.ToCosmosUserAccount());
         await _context.SaveChangesAsync(cancellationToken);
 
-        return entry.Entity.ToUserAccount();
+        return entry?.Entity?.ToUserAccount();
     }
 }

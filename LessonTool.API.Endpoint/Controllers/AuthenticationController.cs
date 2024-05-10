@@ -13,7 +13,7 @@ namespace LessonTool.API.Endpoint.Controllers;
 [ApiController]
 [Route("/api/account")]
 public class AuthenticationController(IUserAccountRepository _userAccounts, ILoginRequestProcessor _loginRequestProcessor, ITokenGenerationService _tokenGenerator,
-    ILoginSessionRepository _loginSessions, IPasswordComplexityValidator _complexityValidator, IHashService _hashService) : ControllerBase
+     IPasswordComplexityValidator _complexityValidator, IHashService _hashService) : ControllerBase
 {
     [HttpPost("login")]
     public async Task<ActionResult<AccessTokensResponseModel>> AuthenticateAsync([FromBody] LoginRequestModel loginRequest, CancellationToken cancellationToken)
@@ -65,8 +65,6 @@ public class AuthenticationController(IUserAccountRepository _userAccounts, ILog
             var principle = _tokenGenerator.GetPrincipalFromExpiredToken(tokens.Token);
             var username = principle.Identity.Name;
 
-            await _loginSessions.DeleteExpiredSessionsAsync(cancellationToken);
-
             //Process the token for a new session
             if (username == "Anonymous")
             {
@@ -75,6 +73,10 @@ public class AuthenticationController(IUserAccountRepository _userAccounts, ILog
             else
             {
                 var user = await _userAccounts.GetAccountByUsernameAsync(username, cancellationToken);
+
+                if (user == null) 
+                    return Unauthorized();
+
                 return _loginRequestProcessor.ProcessUserAccountRefreshRequest(user, tokens);
             }
         }
@@ -82,7 +84,7 @@ public class AuthenticationController(IUserAccountRepository _userAccounts, ILog
         {
             return StatusCode(425);
         }
-        catch (Exception e)
+        catch
         {
             return Unauthorized();
         }
@@ -127,17 +129,37 @@ public class AuthenticationController(IUserAccountRepository _userAccounts, ILog
 
 #if DEBUG
 
-    [HttpGet("test")]
-    public ActionResult<PasswordData> GetHashedData(string password)
-    {
-        string firstHash = _hashService.HashString(password);
-        byte[] salt = _hashService.CreateSalt();
-        string dbHash = _hashService.HashStringWithSalt(firstHash, salt);
+    //[HttpGet("test")]
+    //public ActionResult<PasswordData> GetHashedData(string password)
+    //{
+    //    string firstHash = _hashService.HashString(password);
+    //    byte[] salt = _hashService.CreateSalt();
+    //    string dbHash = _hashService.HashStringWithSalt(firstHash, salt);
 
-        return Ok(new PasswordData(firstHash, dbHash, Convert.ToBase64String(salt)));
-    }
+    //    return Ok(new PasswordData(firstHash, dbHash, Convert.ToBase64String(salt)));
+    //}
 
-    public record PasswordData(string sentHash, string dbHash, string salt);
+    //[HttpGet("testCreate")]
+    //public async Task<ActionResult<PasswordData>> TestCreate(string username, string password)
+    //{
+    //    string firstHash = _hashService.HashString(password);
+    //    byte[] salt = _hashService.CreateSalt();
+    //    string dbHash = _hashService.HashStringWithSalt(firstHash, salt);
+
+    //    await _userAccounts.CreateAsync(new Authentication.Models.UserAccount()
+    //    {
+    //        AccountType = UserClaimConstants.Admin,
+    //        Username = username,
+    //        Password = dbHash,
+    //        PasswordSalt = Convert.ToBase64String(salt),
+    //        PasswordResetToken = ""
+    //    });
+
+    //    return Ok();
+    //}
+
+    //public record PasswordData(string sentHash, string dbHash, string salt);
+
 #endif
 
 }

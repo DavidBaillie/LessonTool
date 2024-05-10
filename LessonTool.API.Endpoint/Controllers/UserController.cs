@@ -1,4 +1,6 @@
 ﻿using LessonTool.API.Authentication.Constants;
+using LessonTool.API.Infrastructure.Interfaces;
+using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +10,8 @@ namespace LessonTool.API.Endpoint.Controllers
     [Authorize(Policy = PolicyNameConstants.AdminPolicy)]
     [ApiController]
     [Route("api/users")]
-    public class UserController : ControllerBase
+    public class UserController(IUserAccountRepository _userAccounts, IHashService _hashService)
+        : ControllerBase
     {
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetAsync(Guid id, CancellationToken cancellationToken)
