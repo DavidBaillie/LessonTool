@@ -3,7 +3,7 @@ using LessonTool.Common.Domain.Models;
 
 namespace LessonTool.UI.Infrastructure.HttpServices;
 
-public class MockLessonApiService : ILessonRepository
+public class MockLessonRepositoryService : ILessonRepository
 {
     private List<LessonDto> lessons = new List<LessonDto>()
     {

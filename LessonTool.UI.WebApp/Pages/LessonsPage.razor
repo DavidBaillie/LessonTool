@@ -4,6 +4,16 @@
 
 @using LessonTool.UI.WebApp.Components.Lesson
 
-<div>
-    <LessonList LessonDataSource="@(() => lessonRepository.GetAllInDateRangeAsync(null, null, cancellationToken))" />
+<div class="d-flex flex-column">
+    @if (isManagingUser)
+    {
+        <div class="d-flex flex-row justify-content-end mt-5 mx-5">
+            <button class="btn btn-primary" @onclick="@(() => navigationManager.NavigateTo("/lessonEditor"))">
+                Create New Lesson
+            </button>
+        </div>
+    }
+    <div>
+        <LessonList Lessons="@lessons" IsAllowedToEdit="@isManagingUser" />
+    </div>
 </div>

@@ -15,9 +15,16 @@
                     </p>
                 </div>
                 <div class="d-flex flex-row justify-content-between">
-                    <a href="@($"/lessons/edit?id={Lesson.Id}")" class="btn btn-primary-outline btn-sm">
-                        Edit
-                    </a>
+                    @if (IsAllowedToEdit)
+                    {
+                        <a href="@($"/lessons/edit?id={Lesson.Id}")" class="btn btn-primary-outline btn-sm">
+                            Edit
+                        </a>
+                    }
+                    else
+                    {
+                        <div></div>
+                    }
                     <p class="mb-0">
                         @lessonPlannedDatetime
                     </p>

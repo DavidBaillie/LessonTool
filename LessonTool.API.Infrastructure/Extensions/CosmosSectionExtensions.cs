@@ -1,4 +1,5 @@
-﻿using LessonTool.API.Infrastructure.Models;
+﻿using LessonTool.API.Infrastructure.Constants;
+using LessonTool.API.Infrastructure.Models;
 using LessonTool.Common.Domain.Models;
 
 namespace LessonTool.API.Infrastructure.Extensions;
@@ -9,8 +10,8 @@ public static class CosmosSectionExtensions
     {
         return new SectionDto()
         {
-            Id = section.Id,
-            LessonId = section.LessonId,
+            Id = new Guid(section.Id),
+            LessonId = new Guid(section.LessonId),
             Title = section.Title,
             Content = section.Content,
             CreatedDate = section.CreatedDate
@@ -21,8 +22,9 @@ public static class CosmosSectionExtensions
     {
         return new CosmosSection()
         {
-            Id = section.Id,
-            LessonId = section.LessonId,
+            Id = section.Id.ToString(),
+            Type = CosmosConstants.SectionTypeName,
+            LessonId = section.LessonId.ToString(),
             Title = section.Title,
             Content = section.Content,
             CreatedDate = section.CreatedDate

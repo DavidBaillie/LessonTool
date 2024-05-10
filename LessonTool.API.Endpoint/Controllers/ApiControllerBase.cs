@@ -1,9 +1,12 @@
-﻿using LessonTool.Common.Domain.Interfaces;
+﻿using LessonTool.API.Authentication.Constants;
+using LessonTool.Common.Domain.Interfaces;
 using LessonTool.Common.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LessonTool.API.Endpoint.Controllers;
 
+[Authorize]
 public abstract class ApiControllerBase<T> : ControllerBase where T : EntityDtoBase
 {
     private readonly IRepository<T> _repository;
@@ -13,6 +16,7 @@ public abstract class ApiControllerBase<T> : ControllerBase where T : EntityDtoB
         _repository = repository;
     }
 
+    [Authorize(Policy = PolicyNameConstants.ReaderPolicy)]
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public virtual async Task<ActionResult<T>> GetAsync(Guid id, bool includeSections = true, CancellationToken cancellationToken = default)
@@ -21,6 +25,7 @@ public abstract class ApiControllerBase<T> : ControllerBase where T : EntityDtoB
         return Ok(entity);
     }
 
+    [Authorize(Policy = PolicyNameConstants.TeacherPolicy)]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public virtual async Task<ActionResult<T>> PostAsync([FromBody] T inboundEntity, CancellationToken cancellationToken)
@@ -29,14 +34,16 @@ public abstract class ApiControllerBase<T> : ControllerBase where T : EntityDtoB
         return CreatedAtAction(nameof(GetAsync), new { entity.Id }, entity);
     }
 
+    [Authorize(Policy = PolicyNameConstants.TeacherPolicy)]
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public virtual async Task<ActionResult> PutAsync([FromBody] T inboundEntity, CancellationToken cancellationToken)
     {
-        await _repository.UpdateAsync(inboundEntity, cancellationToken);
-        return Ok();
+        var entity = await _repository.UpdateAsync(inboundEntity, cancellationToken);
+        return Ok(entity);
     }
 
+    [Authorize(Policy = PolicyNameConstants.TeacherPolicy)]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public virtual async Task<ActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)

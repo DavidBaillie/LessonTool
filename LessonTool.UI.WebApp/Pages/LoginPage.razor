@@ -1,0 +1,37 @@
+﻿@page "/login"
+
+<div class="w-100 d-flex flex-column justify-content-center align-items-center">
+    @if (localTokenUsername == "Anonymous")
+    {
+        <div class="card m-5" style="width: 40rem; max-width: 90vw">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="usernameField" class="form-label">Username</label>
+                    <input id="usernameField" type="text" class="form-control" @bind-value="@username" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="passwordField" class="form-label">Password</label>
+                    <input id="passwordField" type="password" class="form-control" @bind-value="@password" />
+                </div>
+
+                <div class="form-check form-switch">
+                    <label class="form-check-label" for="rememberMeCheckbox">Remember Me</label>
+                    <input class="form-check-input" type="checkbox" role="switch" id="rememberMeCheckbox" @bind-value="@rememberMe">
+                </div>
+
+                <div class="d-flex flex-row justify-content-end">
+                    <button class="btn btn-primary" @onclick="@OnLoginButtonPressed">
+                        Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div>
+            <p>Logged in as @localTokenUsername</p>
+        </div>
+    }
+</div>

@@ -24,6 +24,18 @@ public static class HttpUtilities
         if (queryParams == null || queryParams.Count == 0)
             return new Uri(baseEndpoint);
 
-        return new Uri(QueryHelpers.AddQueryString(baseEndpoint, queryParams));
+        string uri = QueryHelpers.AddQueryString(baseEndpoint, queryParams);
+
+        try
+        {
+            var built = new Uri(uri);
+            Console.WriteLine(built.ToString());
+            return built;
+        }
+        catch
+        {
+            Console.WriteLine($"Cannot build URI from [{uri}]");
+            throw;
+        }
     }
 }

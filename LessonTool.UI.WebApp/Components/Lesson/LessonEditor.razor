@@ -6,6 +6,10 @@
         <p>@failureMessage</p>
     </div>
 }
+else if (!userIsAllowedToEdit)
+{
+    <p>You do not have access to this page!</p>
+}
 else
 {
     <div class="container-fluid p-0 m-0">
@@ -25,6 +29,11 @@ else
                 <div class="mb-4">
                     <div class="">
                         <div class="row mx-0">
+                            <div class="col-12">
+                                <div class="d-flex flex-row justify-content-end">
+                                    <input type="datetime-local" @bind-value="@lesson.VisibleDate" />
+                                </div>
+                            </div>
                             <div class="col-12 form-floating mb-1 px-0">
                                 <input class="form-control" type="text" id="lessonTitle" @bind-value="@lesson.Name" />
                                 <label for="lessonTitle" class="form-label">Title</label>

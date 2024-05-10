@@ -6,21 +6,8 @@ namespace LessonTool.UI.WebApp.Components.Lesson;
 public partial class LessonList
 {
     [Parameter, EditorRequired]
-    public Func<Task<List<LessonDto>>> LessonDataSource { get; set; }
+    public List<LessonDto> Lessons { get; set; } = new();
 
-    private List<LessonDto> lessons = new();
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            await base.OnInitializedAsync();
-            lessons = await LessonDataSource.Invoke();
-        }
-        catch (Exception ex)
-        {
-
-        }
-    }
+    [Parameter, EditorRequired]
+    public bool IsAllowedToEdit { get; set; }
 }

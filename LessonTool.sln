@@ -7,7 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessonTool.UI.WebApp", "Les
 	ProjectSection(ProjectDependencies) = postProject
 		{29E2B9CC-9A1E-4462-BF73-98C253003E5B} = {29E2B9CC-9A1E-4462-BF73-98C253003E5B}
 		{A0C5E9DE-C24F-4EEE-982B-20DD4B97D35C} = {A0C5E9DE-C24F-4EEE-982B-20DD4B97D35C}
-		{E0F7B711-CECB-4C4A-B8E9-87CFFEE299D5} = {E0F7B711-CECB-4C4A-B8E9-87CFFEE299D5}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessonTool.Common.Domain", "LessonTool.Common.Domain\LessonTool.Common.Domain.csproj", "{29E2B9CC-9A1E-4462-BF73-98C253003E5B}"
@@ -15,12 +14,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessonTool.UI.Infrastructure", "LessonTool.UI.Infrastructure\LessonTool.UI.Infrastructure.csproj", "{A0C5E9DE-C24F-4EEE-982B-20DD4B97D35C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{29E2B9CC-9A1E-4462-BF73-98C253003E5B} = {29E2B9CC-9A1E-4462-BF73-98C253003E5B}
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessonTool.UI.Application", "LessonTool.UI.Application\LessonTool.UI.Application.csproj", "{E0F7B711-CECB-4C4A-B8E9-87CFFEE299D5}"
-	ProjectSection(ProjectDependencies) = postProject
-		{29E2B9CC-9A1E-4462-BF73-98C253003E5B} = {29E2B9CC-9A1E-4462-BF73-98C253003E5B}
-		{A0C5E9DE-C24F-4EEE-982B-20DD4B97D35C} = {A0C5E9DE-C24F-4EEE-982B-20DD4B97D35C}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessonTool.API.Endpoint", "LessonTool.API.Endpoint\LessonTool.API.Endpoint.csproj", "{BE7C9586-C8C6-4E1D-94A3-8C774173E8F0}"
@@ -33,6 +26,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessonTool.API.Infrastructu
 	ProjectSection(ProjectDependencies) = postProject
 		{29E2B9CC-9A1E-4462-BF73-98C253003E5B} = {29E2B9CC-9A1E-4462-BF73-98C253003E5B}
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessonTool.API.Authentication", "LessonTool.API.Authentication\LessonTool.API.Authentication.csproj", "{10A638D5-009C-45E3-8504-A3532EF15ADF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessonTool.API.Domain", "LessonTool.API.Domain\LessonTool.API.Domain.csproj", "{60CE3E8A-C02F-417C-833B-D31BF3A7A75D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessonTool.UI.Application", "LessonTool.UI.Application\LessonTool.UI.Application.csproj", "{0F70CC1B-7600-41AA-A106-9B84A4531603}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessonTool.API.Application", "LessonTool.API.Application\LessonTool.API.Application.csproj", "{FDED88CF-6D0F-454A-AEF4-47132F31A620}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,10 +53,6 @@ Global
 		{A0C5E9DE-C24F-4EEE-982B-20DD4B97D35C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0C5E9DE-C24F-4EEE-982B-20DD4B97D35C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0C5E9DE-C24F-4EEE-982B-20DD4B97D35C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E0F7B711-CECB-4C4A-B8E9-87CFFEE299D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E0F7B711-CECB-4C4A-B8E9-87CFFEE299D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E0F7B711-CECB-4C4A-B8E9-87CFFEE299D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E0F7B711-CECB-4C4A-B8E9-87CFFEE299D5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BE7C9586-C8C6-4E1D-94A3-8C774173E8F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BE7C9586-C8C6-4E1D-94A3-8C774173E8F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE7C9586-C8C6-4E1D-94A3-8C774173E8F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -64,6 +61,22 @@ Global
 		{70517EAC-8140-4A08-94BF-EAAEA06EAEA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70517EAC-8140-4A08-94BF-EAAEA06EAEA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70517EAC-8140-4A08-94BF-EAAEA06EAEA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10A638D5-009C-45E3-8504-A3532EF15ADF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10A638D5-009C-45E3-8504-A3532EF15ADF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10A638D5-009C-45E3-8504-A3532EF15ADF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10A638D5-009C-45E3-8504-A3532EF15ADF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60CE3E8A-C02F-417C-833B-D31BF3A7A75D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60CE3E8A-C02F-417C-833B-D31BF3A7A75D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60CE3E8A-C02F-417C-833B-D31BF3A7A75D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60CE3E8A-C02F-417C-833B-D31BF3A7A75D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F70CC1B-7600-41AA-A106-9B84A4531603}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F70CC1B-7600-41AA-A106-9B84A4531603}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F70CC1B-7600-41AA-A106-9B84A4531603}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F70CC1B-7600-41AA-A106-9B84A4531603}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDED88CF-6D0F-454A-AEF4-47132F31A620}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDED88CF-6D0F-454A-AEF4-47132F31A620}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDED88CF-6D0F-454A-AEF4-47132F31A620}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDED88CF-6D0F-454A-AEF4-47132F31A620}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
