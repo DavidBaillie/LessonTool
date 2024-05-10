@@ -10,7 +10,7 @@
         foreach (var lesson in Lessons)
         {
             <div class="lesson-item">
-                <LessonItem Lesson="@lesson" />
+                <LessonItem Lesson="@lesson" IsAllowedToEdit="@IsAllowedToEdit" />
             </div>
         }
     }
