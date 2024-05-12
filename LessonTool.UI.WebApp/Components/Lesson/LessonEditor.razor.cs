@@ -114,5 +114,16 @@ namespace LessonTool.UI.WebApp.Components.Lesson
                 Console.WriteLine($"Failed to save lesson");
             }
         }
+
+        private async Task TryDeleteSectionAsync(SectionFormModel section)
+        {
+            lesson.Sections.Remove(section);
+
+            if (section.Id == Guid.Empty)
+                return;
+
+            await InvokeAsync(StateHasChanged);
+            await SectionRepository.DeleteAsync(section.Id, cancellationToken);
+        }
     }
 }

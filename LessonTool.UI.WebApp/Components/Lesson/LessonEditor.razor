@@ -1,4 +1,5 @@
-﻿@inherits BaseComponent<LessonEditor>
+﻿@using LessonTool.UI.WebApp.FormModels
+@inherits BaseComponent<LessonEditor>
 
 @if (lessonFailedToLoad)
 {
@@ -53,6 +54,7 @@ else
                     @for (int i = 0; i < lesson.Sections.Count; i++)
                     {
                         int index = i;
+                        SectionFormModel section = lesson.Sections[index];
 
                         <div class="card @($"{(index > 0 ? "mt-3" : "")}")">
                             <div class="card-body">
@@ -70,14 +72,14 @@ else
 
                                     <div class="col-12 form-floating">
                                         <textarea class="form-control" placeholder="Content" type="text" id="@($"secContent-{index}")"
-                                                  style="height: 6rem;"
+                                                  style="height: auto;" rows="10"
                                                   @bind-value="@lesson.Sections[index].Content"
                                                   @bind-value:event="oninput" />
                                         <label for="@($"secContent-{index}")" class="form-label">Content</label>
                                     </div>
 
                                     <div class="d-flex flex-row justify-content-end mt-2">
-                                        <button class="btn btn-danger" onclick="@(() => lesson.Sections.RemoveAt(index))" >Remove</button>
+                                        <button class="btn btn-danger" onclick="@(async () => await TryDeleteSectionAsync(section))" >Remove</button>
                                     </div>
                                 </div>
                             </div>
