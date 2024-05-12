@@ -50,7 +50,7 @@ namespace LessonTool.UI.WebApp.Components.Lesson
                 else
                 {
                     var dto = await LessonRepository.GetAsync(LessonId, cancellationToken);
-                    lesson = dto.ToLessonFormModel(dto.Sections);
+                    lesson = dto.ToLessonFormModel(dto.Sections.OrderBy(x => x.Order).ToList());
                 }
                 editContext = new(lesson);
             }
@@ -79,6 +79,8 @@ namespace LessonTool.UI.WebApp.Components.Lesson
                 return;
 
             LessonDto dto = lesson.ToLessonDto(lesson.Sections);
+            for (int i = 0; i < dto.Sections.Count; i++)
+                dto.Sections[i].Order = i;
 
             try
             {

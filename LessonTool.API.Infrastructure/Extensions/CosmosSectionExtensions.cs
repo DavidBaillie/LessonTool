@@ -14,7 +14,8 @@ public static class CosmosSectionExtensions
             LessonId = new Guid(section.LessonId),
             Title = section.Title,
             Content = section.Content,
-            CreatedDate = section.CreatedDate
+            CreatedDate = section.CreatedDate,
+            Order = section.Order,
         };
     }
 
@@ -27,7 +28,8 @@ public static class CosmosSectionExtensions
             LessonId = section.LessonId.ToString(),
             Title = section.Title,
             Content = section.Content,
-            CreatedDate = section.CreatedDate
+            CreatedDate = section.CreatedDate,
+            Order = section.Order,
         };
     }
 }
