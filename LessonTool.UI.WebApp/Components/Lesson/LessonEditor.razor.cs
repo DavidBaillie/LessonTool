@@ -85,7 +85,6 @@ namespace LessonTool.UI.WebApp.Components.Lesson
                 if (lesson.Id == Guid.Empty)
                 {
                     await LessonRepository.CreateAsync(dto, cancellationToken);
-
                     var saveSectionTasks = dto.Sections.Select(x => SectionRepository.CreateAsync(x, cancellationToken));
                     await Task.WhenAll(saveSectionTasks);
                 }
@@ -93,9 +92,17 @@ namespace LessonTool.UI.WebApp.Components.Lesson
                 {
                     await LessonRepository.UpdateAsync(dto, cancellationToken);
 
-                    var saveSectionTasks = dto.Sections.Select(x => SectionRepository.UpdateAsync(x, cancellationToken));
-                    await Task.WhenAll(saveSectionTasks);
+                    var sectionSaves = dto.Sections.Select(x =>
+                    {
+                        if (x.Id == Guid.Empty)
+                            return SectionRepository.CreateAsync(x, cancellationToken);
+
+                        return SectionRepository.UpdateAsync(x, cancellationToken);
+                    });
+                    await Task.WhenAll(sectionSaves);
                 }
+
+                
 
                 navigationManager.NavigateTo("/lessons");
             }
