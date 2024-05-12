@@ -84,13 +84,16 @@ namespace LessonTool.UI.WebApp.Components.Lesson
             {
                 if (lesson.Id == Guid.Empty)
                 {
-                    await LessonRepository.CreateAsync(dto, cancellationToken);
+                    var apiLesson = await LessonRepository.CreateAsync(dto, cancellationToken);
+                    dto.Sections.ForEach(x =>  x.LessonId = apiLesson.Id);
+
                     var saveSectionTasks = dto.Sections.Select(x => SectionRepository.CreateAsync(x, cancellationToken));
                     await Task.WhenAll(saveSectionTasks);
                 }
                 else
                 {
-                    await LessonRepository.UpdateAsync(dto, cancellationToken);
+                    var apiLesson = await LessonRepository.UpdateAsync(dto, cancellationToken);
+                    dto.Sections.ForEach(x => x.LessonId = apiLesson.Id);
 
                     var sectionSaves = dto.Sections.Select(x =>
                     {
@@ -101,8 +104,6 @@ namespace LessonTool.UI.WebApp.Components.Lesson
                     });
                     await Task.WhenAll(sectionSaves);
                 }
-
-                
 
                 navigationManager.NavigateTo("/lessons");
             }

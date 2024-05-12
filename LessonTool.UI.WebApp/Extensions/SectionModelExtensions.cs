@@ -17,12 +17,12 @@ public static class SectionModelExtensions
         };
     }
 
-    public static SectionDto ToSectionDto(this SectionFormModel section)
+    public static SectionDto ToSectionDto(this SectionFormModel section, Guid? lessonId = null)
     {
         return new SectionDto()
         {
             Id = section.Id,
-            LessonId = section.LessonId,
+            LessonId = lessonId.HasValue ? lessonId.Value : section.LessonId,
             Content = section.Content,
             Title = section.Title,
             CreatedDate = section.CreatedDate

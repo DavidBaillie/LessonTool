@@ -27,7 +27,7 @@ namespace LessonTool.UI.WebApp.Extensions
                 Description = lesson.Description,
                 PlannedDate = lesson.PlannedDate,
                 VisibleDate = lesson.VisibleDate,
-                Sections = sections is not null ? sections.Select(x => x.ToSectionDto()).ToList() : new()
+                Sections = sections is not null ? sections.Select(x => x.ToSectionDto(lesson.Id)).ToList() : new()
             };
         }
     }
