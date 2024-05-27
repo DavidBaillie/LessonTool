@@ -16,6 +16,12 @@ public class EFCosmosUserAccountRepository(CosmosDbContext _context) : IUserAcco
         return account?.ToUserAccount();
     }
 
+    public async Task<List<UserAccount>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        var accounts = await _context.UserAccounts.ToListAsync(cancellationToken);
+        return accounts.Select(x => x.ToUserAccount()).ToList();
+    }
+
     public async Task<UserAccount> CreateAsync(UserAccount entity, CancellationToken cancellationToken = default)
     {
         var account = entity.ToCosmosUserAccount();
