@@ -32,7 +32,7 @@ namespace LessonTool.API.Endpoint.Controllers
         [HttpPost]
         public async Task<ActionResult<ResetUserDto>> CreateAsync(UserDto userDto, CancellationToken cancellationToken)
         {
-            var existing = _userAccounts.GetAccountByUsernameAsync(userDto.Username);
+            var existing = await _userAccounts.GetAccountByUsernameAsync(userDto.Username);
             if (existing != null)
                 return BadRequest($"This username is already taken.");
 

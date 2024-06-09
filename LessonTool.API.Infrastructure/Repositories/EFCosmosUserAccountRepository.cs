@@ -3,7 +3,6 @@ using LessonTool.API.Infrastructure.EntityFramework;
 using LessonTool.API.Infrastructure.Extensions;
 using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.Common.Domain.Exceptions;
-using LessonTool.Common.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace LessonTool.API.Infrastructure.Repositories;

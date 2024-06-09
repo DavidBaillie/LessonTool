@@ -15,8 +15,8 @@ namespace LessonTool.UI.WebApp
 {
     public class Program
     {
-        //private const string apiEndpoint = "https://localhost:44360";
-        private const string apiEndpoint = "https://yg-api.azurewebsites.net/";
+        private const string apiEndpoint = "https://localhost:44360";
+        //private const string apiEndpoint = "https://yg-api.azurewebsites.net/";
 
         public static async Task Main(string[] args)
         {
