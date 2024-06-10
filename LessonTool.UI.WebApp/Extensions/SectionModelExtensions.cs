@@ -13,7 +13,8 @@ public static class SectionModelExtensions
             LessonId = section.LessonId,
             Content = section.Content,
             Title = section.Title,
-            CreatedDate = section.CreatedDate
+            CreatedDate = section.CreatedDate,
+            Order = section.Order
         };
     }
 
@@ -25,7 +26,8 @@ public static class SectionModelExtensions
             LessonId = lessonId.HasValue ? lessonId.Value : section.LessonId,
             Content = section.Content,
             Title = section.Title,
-            CreatedDate = section.CreatedDate
+            CreatedDate = section.CreatedDate,
+            Order = section.Order
         };
     }
 }

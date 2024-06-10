@@ -14,4 +14,5 @@ public class SectionFormModel
     public string Content { get; set; }
     
     public DateTime CreatedDate { get; set; }
+    public int Order { get; set; }
 }

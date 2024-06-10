@@ -25,7 +25,7 @@ namespace LessonTool.UI.WebApp.Pages
                 if (navigationManager.TryGetQueryString("id", out Guid id, Guid.TryParse))
                 {
                     lesson = await lessonRepository.LoadFullLessonFromSourceAsync(id, cancellationToken);
-                    lesson.Sections.OrderBy(x => x.Order);
+                    lesson.Sections = lesson.Sections.OrderBy(x => x.Order).ToList();
                 }
             }
             catch (HttpRequestException ex)
