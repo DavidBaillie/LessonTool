@@ -1,0 +1,31 @@
+﻿<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Role</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        @if(Users.Count() > 0)
+        {
+            @foreach (var user in Users)
+            {
+                Guid id = user.Id;
+                <tr @key="@user.Id">
+                    <td>@user.Username</td>
+                    <td>@user.AccountType</td>
+                    <td style="width:auto" class="d-flex flex-row justify-content-end">
+                        <button class="btn btn-primary" onclick="@(async () => await OnEditUser(id))">Edit</button>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td>No users...</td>
+            </tr>
+        }
+    </tbody>
+</table>

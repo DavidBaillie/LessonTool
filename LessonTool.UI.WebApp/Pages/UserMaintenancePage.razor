@@ -1,1 +1,21 @@
-﻿
+﻿@page "/users"
+@using LessonTool.UI.WebApp.Components.Users
+
+@inherits BaseComponent<UserMaintenancePage>
+
+<div class="d-flex flex-column justify-content-center align-items-center mx-3 mt-3">
+    @if (isLoadingFromSource)
+    {
+        <div>
+            <p>Loading...</p>
+        </div>
+    }
+    else
+    {
+        <div style="max-width: 100rem;" class="w-100">
+            <div class="card card-body">
+                <UserListView Users="@users" OnSelectEditUser="@((x) => navigationManager.NavigateTo($"/users/edit{(x == Guid.Empty ? "" : $"?Id={x}")}"))" />
+            </div>
+        </div>
+    }
+</div>

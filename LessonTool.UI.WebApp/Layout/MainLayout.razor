@@ -18,11 +18,20 @@
                     </a>
                 </div>
 
-                @if (userToken.GetRoleClaims().Any(x => x == UserClaimConstants.Admin))
+                @if (userToken.GetRoleClaims().Any(x => x == UserClaimConstants.Admin || x == UserClaimConstants.Teacher))
                 {
                     <div class="navbar-nav">
-                        <a class="nav-link active" aria-current="page" href="/lessons">
+                        <a class="nav-link active" aria-current="page" href="/users">
                             User Management
+                        </a>
+                    </div>
+                }
+
+                @if (userToken.GetRoleClaims().Any(x => x == UserClaimConstants.Admin || x == UserClaimConstants.Finance))
+                {
+                    <div class="navbar-nav">
+                        <a class="nav-link active" aria-current="page" href="/Finance">
+                            Finances
                         </a>
                     </div>
                 }

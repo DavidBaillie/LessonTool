@@ -45,6 +45,7 @@ namespace LessonTool.UI.WebApp
             builder.Services.AddTransient<IFullLessonRepository, FullLessonRepository>();
             builder.Services.AddTransient<ILessonRepository, LessonEndpoint>();
             builder.Services.AddTransient<ISectionRepository, SectionEndpoint>();
+            builder.Services.AddTransient<IUserRepository, UsersEndpoint>();
             builder.Services.AddTransient<IAuthenticationEndpoint, AuthenticationEndpoint>();
             builder.Services.AddTransient<AuthenticationTokenClientMiddleware>();
             

@@ -6,10 +6,19 @@
 @using LessonTool.UI.WebApp.Components.Section
 
 <div>
-    <div class="mt-3">
-        <LessonHeader Lesson="@lesson" />
-    </div>
-    <div>
-        <SectionList Sections="@lesson.Sections" />
-    </div>
+    @if (isLoadingFromSource)
+    {
+        <div>
+            <p>Loading...</p>
+        </div>
+    }
+    else
+    {
+        <div class="mt-3">
+            <LessonHeader Lesson="@lesson" />
+        </div>
+        <div>
+            <SectionList Sections="@lesson.Sections" />
+        </div>
+    }
 </div>
