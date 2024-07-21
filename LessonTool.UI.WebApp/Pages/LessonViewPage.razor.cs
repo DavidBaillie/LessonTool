@@ -14,6 +14,7 @@ namespace LessonTool.UI.WebApp.Pages
         private LessonDto lesson = new();
 
         private string failureMessage = string.Empty;
+        private bool isLoadingFromSource = true;
 
 
         protected override async Task OnInitializedAsync()
@@ -25,7 +26,7 @@ namespace LessonTool.UI.WebApp.Pages
                 if (navigationManager.TryGetQueryString("id", out Guid id, Guid.TryParse))
                 {
                     lesson = await lessonRepository.LoadFullLessonFromSourceAsync(id, cancellationToken);
-                    lesson.Sections.OrderBy(x => x.Order);
+                    lesson.Sections = lesson.Sections.OrderBy(x => x.Order).ToList();
                 }
             }
             catch (HttpRequestException ex)
@@ -37,6 +38,10 @@ namespace LessonTool.UI.WebApp.Pages
             {
                 Console.WriteLine($"Failed to initialize: {ex}");
                 failureMessage = $"General failure: {ex}";
+            }
+            finally
+            {
+                isLoadingFromSource = false;
             }
         }
     }

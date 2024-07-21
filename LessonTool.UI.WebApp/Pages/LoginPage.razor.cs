@@ -1,4 +1,5 @@
 ﻿using LessonTool.UI.Infrastructure.Interfaces;
+using LessonTool.UI.WebApp.Components.Common;
 using LessonTool.UI.WebApp.Extensions;
 using Microsoft.AspNetCore.Components;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,6 +15,8 @@ public partial class LoginPage
     [Inject]
     private NavigationManager navigationManager { get; set; }
 
+    private InlineErrorDisplay inlineErrorComponent;
+
     private string localTokenUsername = "Anonymous";
 
     private string username;
@@ -27,7 +30,7 @@ public partial class LoginPage
         localTokenUsername = (await authenticationStateHandler.GetSecurityTokenAsync(CancellationToken.None)).GetUsernameClaim();
     }
 
-    private async Task OnLoginButtonPressed()
+    private async Task OnLoginButtonPressed(Action OnComplete)
     {
         if (await authenticationStateHandler.TryLoginUsingCredentialsAsync(username, password, rememberMe, CancellationToken.None))
         {
@@ -39,7 +42,11 @@ public partial class LoginPage
         else
         {
             Console.WriteLine($"Failed to login!");
+            inlineErrorComponent.DisplayError("Login failed!", 5);
         }
+
+        await Task.Delay(5000);
+        OnComplete?.Invoke();
     }
 
     private async Task<string> GetUsernameFromAccessTokenAsync()

@@ -66,7 +66,13 @@ namespace LessonTool.UI.WebApp.Components.Lesson
             if (lessonFailedToLoad)
                 return;
 
-            lesson.Sections.Add(new());
+            var section = new SectionFormModel()
+            {
+                CreatedDate = DateTime.UtcNow,
+                Order = lesson.Sections.Count < 1 ? 0 : lesson.Sections.MaxBy(x => x.Order).Order + 1
+            };
+
+            lesson.Sections.Add(section);
             StateHasChanged();
         }
 
@@ -79,8 +85,6 @@ namespace LessonTool.UI.WebApp.Components.Lesson
                 return;
 
             LessonDto dto = lesson.ToLessonDto(lesson.Sections);
-            for (int i = 0; i < dto.Sections.Count; i++)
-                dto.Sections[i].Order = i;
 
             try
             {
@@ -115,15 +119,30 @@ namespace LessonTool.UI.WebApp.Components.Lesson
             }
         }
 
-        private async Task TryDeleteSectionAsync(SectionFormModel section)
+        private async Task<bool> TryDeleteSectionAsync(SectionFormModel section)
         {
+            if (section == null)
+            {
+                Console.WriteLine($"Cannot remove a null section!");
+                return false;
+            }
+
             lesson.Sections.Remove(section);
 
-            if (section.Id == Guid.Empty)
-                return;
+            try
+            {
+                if (section.Id != Guid.Empty)
+                    await SectionRepository.DeleteAsync(section.Id, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to remove the provided section!\n{ex}");
+                return false;
+            }
 
             await InvokeAsync(StateHasChanged);
-            await SectionRepository.DeleteAsync(section.Id, cancellationToken);
+
+            return true;
         }
     }
 }

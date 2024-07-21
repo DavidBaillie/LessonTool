@@ -1,15 +1,15 @@
-﻿using LessonTool.UI.Infrastructure.Constants;
-using LessonTool.UI.Infrastructure.Interfaces;
+﻿using LessonTool.Common.Domain.Interfaces;
+using LessonTool.Common.Domain.Models;
+using LessonTool.UI.Infrastructure.Constants;
 using System.Text.Json;
 
 namespace LessonTool.UI.Infrastructure.HttpServices;
 
-public class UsersEndpoint(IAuthenticationStateHandler _authenticationStateHandler, IHttpClientFactory _clientFactory)
+public class UsersEndpoint : ApiServiceBase<UserDto>, IUserRepository
 {
-    private JsonSerializerOptions jsonOptions { get; set; } = new(JsonSerializerDefaults.Web);
+    public UsersEndpoint(IServiceProvider serviceProvider)
+        : base(serviceProvider, ApiEndpointConstants.CommonApiClientName, ApiEndpointConstants.UsersEndpoint)
+    {
 
-    private HttpClient GetHttpClient() => _clientFactory.CreateClient(ApiEndpointConstants.CommonApiClientName);
-
-
-    
+    }
 }

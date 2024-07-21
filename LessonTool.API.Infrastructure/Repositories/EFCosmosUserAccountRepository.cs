@@ -3,7 +3,6 @@ using LessonTool.API.Infrastructure.EntityFramework;
 using LessonTool.API.Infrastructure.Extensions;
 using LessonTool.API.Infrastructure.Interfaces;
 using LessonTool.Common.Domain.Exceptions;
-using LessonTool.Common.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace LessonTool.API.Infrastructure.Repositories;
@@ -14,6 +13,12 @@ public class EFCosmosUserAccountRepository(CosmosDbContext _context) : IUserAcco
     {
         var account = await _context.UserAccounts.FirstOrDefaultAsync(x => x.Username == username);
         return account?.ToUserAccount();
+    }
+
+    public async Task<List<UserAccount>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        var accounts = await _context.UserAccounts.ToListAsync(cancellationToken);
+        return accounts.Select(x => x.ToUserAccount()).ToList();
     }
 
     public async Task<UserAccount> CreateAsync(UserAccount entity, CancellationToken cancellationToken = default)
