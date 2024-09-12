@@ -67,3 +67,5 @@ public class Program
         app.Run();
     }
 }
+
+public interface ITestMarker { }
